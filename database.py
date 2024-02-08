@@ -48,12 +48,14 @@ class Database:
             return None
     
     def get_column_names(self, table_name):
+        """Returns list of column names of table_name."""
         column_info_query = f"PRAGMA table_info({table_name});"
         columns_info = self.execute_query(column_info_query)
         column_names = [info[1] for info in columns_info]  # Column name is in the second position
         return column_names
         
     def list_tables(self):
+        """Lists all existing table names in database."""
         query = "SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%';"
         try:
             tables = self.execute_query(query)
@@ -65,8 +67,10 @@ class Database:
                 print("No tables found or unable to retrieve tables.")
         except TypeError as e:
             print(f"An error occurred: {e}")
+        print()
     
     def print_table(self, table_name):
+        """Prints table contents in tabular format."""
         query = f"SELECT * FROM {table_name};"
         try:
             rows = self.execute_query(query)
@@ -77,7 +81,12 @@ class Database:
                 print("This table does not have any data.")
         except TypeError as e:
             print(f"An error occurred: {e}")
+        print()
 
+    def user_query(self, query):
+        """Executes a user sql query."""
+        result = self.execute_query(query)
+        print(f"{query}\n{result}")
 
     def close(self):
         """
