@@ -3,7 +3,7 @@ from database import Database
 
 def main():
     db = Database('example.db')
-
+    db.setupdatabase()
     print("=== School Class Registration System ===")
     print("Login:")
     print("1. Student")

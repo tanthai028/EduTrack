@@ -15,7 +15,43 @@ class Database:
             # print("= Database connection opened =\n")
         except sqlite3.Error as e:
             print(f"Error connecting to database: {e}")
-    
+
+    def setupdatabase(self):
+        # Create table
+        self.execute_query('''CREATE TABLE IF NOT EXISTS "Student" (
+        "StudentID"	INTEGER,
+        "FirstName"	TEXT NOT NULL,
+        "LastName"	TEXT NOT NULL,
+        "Email"	TEXT NOT NULL UNIQUE,
+        "PhoneNumber"	TEXT,
+        "DateOfBirth"	TEXT,
+        PRIMARY KEY("StudentID" AUTOINCREMENT))''')
+        
+        self.execute_query('''CREATE TABLE IF NOT EXISTS "Instructor" (
+        "InstructorID" INTEGER PRIMARY KEY AUTOINCREMENT,
+        "FirstName" TEXT NOT NULL,
+        "LastName" TEXT NOT NULL,
+        "Email" TEXT NOT NULL UNIQUE,
+        "OfficeNumber" TEXT
+        )''')
+        
+        self.execute_query('''CREATE TABLE IF NOT EXISTS "Enrollment" (
+        "EnrollmentID" INTEGER PRIMARY KEY AUTOINCREMENT,
+        "StudentID" INTEGER NOT NULL,
+        "CourseID" INTEGER NOT NULL,
+        "EnrollmentDate" TEXT NOT NULL,
+        "Grade" TEXT,
+        FOREIGN KEY ("StudentID") REFERENCES "Student" ("StudentID"),
+        FOREIGN KEY ("CourseID") REFERENCES "Course" ("CourseID")
+        )''')
+        
+        self.execute_query('''CREATE TABLE IF NOT EXISTS "Course" (
+        "CourseID" INTEGER PRIMARY KEY AUTOINCREMENT,
+        "CourseName" TEXT NOT NULL,
+        "CourseDescription" TEXT,
+        "CreditHours" INTEGER NOT NULL
+        )''')
+        
     def execute_query(self, query, params=None):
         """
         Executes a SQL query and returns the results for 'SELECT' or the last row id for 'INSERT'.
