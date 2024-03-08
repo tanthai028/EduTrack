@@ -1,6 +1,5 @@
 import sqlite3
 import os
-from tabulate import tabulate
 
 class Database:
     def __init__(self, db_filename='school_database.db'):
@@ -81,8 +80,8 @@ class Database:
             else:
                 cursor.execute(query)
             
-            # if query starts with 'SELECT' or 'PRAGMA'
-            if query.strip().upper().startswith('SELECT') or query.strip().upper().startswith('PRAGMA'):
+            # if query starts with 'SELECT'
+            if query.strip().upper().startswith('SELECT'):
                 return cursor.fetchall()
             
             # if query starts with 'INSERT'

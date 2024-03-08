@@ -2,6 +2,27 @@ import os
 from classes import *
 from interface import *
 
+def delete_student(db, student_id):
+    delete_enrollments_query = '''DELETE FROM Enrollment WHERE StudentID = ?'''
+    db.execute_query(delete_enrollments_query, (student_id,))
+
+    delete_student_query = '''DELETE FROM Student WHERE StudentID = ?'''
+    db.execute_query(delete_student_query, (student_id,))
+
+def print_student_info(student_info):
+    title = "=== Student Information ==="
+    details = [
+        f"U Number: {student_info.get('StudentID', 'N/A')}",
+        f"Name: {student_info.get('FirstName', 'N/A')} {student_info.get('LastName', 'N/A')}",
+        f"Email: {student_info.get('Email', 'N/A')}",
+        f"Phone Number: {student_info.get('PhoneNumber', 'N/A')}",
+        f"Date of Birth: {student_info.get('DateOfBirth', 'N/A')}",
+    ]
+    
+    print(title)
+    for detail in details:
+        print(detail)
+
 def student_menu(db, u_number):
     while True:
         print_menu(student_menu_cfg)
@@ -17,6 +38,10 @@ def student_menu(db, u_number):
             case '3':
                 register_classes(u_number, db)
             case '4':
+                delete_student(db, u_number)
+                print(f"Successfully Deleted User: {u_number}")
+                return
+            case '5':
                 print("Logging out...")
                 return
             case _:

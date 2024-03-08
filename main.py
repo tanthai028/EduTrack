@@ -7,23 +7,24 @@ from faculty import faculty_login
 
 def main():
     db = Database('school_database.db')
-    db.setupdatabase()  # Call setupdatabase method
+    db.setupdatabase()  # Setup the initial database
 
     try:
         while True:
             print_menu(main_menu_cfg)
-            user_type = input("> ")
+            choice = input("> ")
             os.system('cls')
-            if user_type == '1':
-                student_login(db)
-            elif user_type == '2':
-                faculty_login(db)
-            elif user_type == '3':
-                db.close()
-                print("Exiting...")
-                break
-            else:
-                print("Invalid choice. Please enter 1, 2, or 3.")
+            match choice:
+                case '1':
+                    student_login(db)
+                case '2':
+                    faculty_login(db)
+                case '3':
+                    db.close()
+                    print("Exiting...")
+                    break
+                case _:
+                    print_invalid_msg(main_menu_cfg)
     except KeyboardInterrupt:
         print("\nProgram interrupted. Closing database...")
         db.close()
@@ -31,4 +32,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-    # print_menu(faculty_menu_options)

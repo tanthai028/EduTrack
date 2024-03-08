@@ -3,26 +3,25 @@ import os
 from interface import *
 
 def faculty_menu(db, email):
+    while True:
+        print_menu(faculty_menu_cfg)
+        choice = input("Enter your choice (1-3): ")
+        os.system('cls')
 
-        while True:
-            print_menu(faculty_menu_cfg)
-            choice = input("Enter your choice (1-3): ")
-            os.system('cls')
-
-            match choice:
-                case '1':
-                    faculty_info = get_faculty_info(email, db)
-                    print("=== Faculty Information ===")
-                    print(f"Email: {faculty_info['Email']}")
-                    print(f"Name: {faculty_info['FirstName']} {faculty_info['LastName']}")
-                # Add more information as needed
-                case '2':
-                    manage_classes(email, db)
-                case '3':
-                    print("Logging out...")
-                    return
-                case _:
-                    print_invalid_choice(faculty_menu_cfg)
+        match choice:
+            case '1':
+                faculty_info = get_faculty_info(email, db)
+                print("=== Faculty Information ===")
+                print(f"Email: {faculty_info['Email']}")
+                print(f"Name: {faculty_info['FirstName']} {faculty_info['LastName']}")
+            # Add more information as needed
+            case '2':
+                manage_classes(email, db)
+            case '3':
+                print("Logging out...")
+                return
+            case _:
+                print_invalid_msg(faculty_menu_cfg)
 
 def faculty_login(db):
     while True:
@@ -44,7 +43,7 @@ def faculty_login(db):
                 create_faculty_account(db)
                 return
             case _:
-                print_invalid_choice(faculty_login_menu_cfg)
+                print_invalid_msg(faculty_login_menu_cfg)
 
 def validate_faculty_login(email, password, db):
     # Check if the user exists in the database and the provided credentials are correct
