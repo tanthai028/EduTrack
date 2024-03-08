@@ -1,4 +1,6 @@
 import sys
+import sqlite3
+import os
 from database import Database
 
 def main():
@@ -123,7 +125,6 @@ def search_classes(db):
         print("Search Results:")
         for row in result:
             print(f"CourseID: {row[0]}, Course Name: {row[1]}, Course Description: {row[2]}, Credit Hours: {row[3]}")
-            # You can print more information as needed
     else:
         print("No classes found matching the keyword.")
 
@@ -138,7 +139,16 @@ def create_student_account(db):
     first_name = input("Enter your first name: ")
     last_name = input("Enter your last name: ")
     email = input("Enter your email: ")
-    phone_number = input("Enter your phone number: ")
+    
+    while True:
+        phone_number = input("Enter your phone number: ")
+        if not phone_number.isdigit():
+            print("Phone number must be a numeric value. Please try again.")
+        else:
+            break
+            
+    phone_number = int(phone_number)
+    
     dob = input("Enter your date of birth (YYYY-MM-DD): ")
 
     # Check if the user already exists
@@ -148,6 +158,7 @@ def create_student_account(db):
     else:
         db.execute_query("INSERT INTO Student (StudentID, Password, FirstName, LastName, Email, PhoneNumber, DateOfBirth) VALUES (?, ?, ?, ?, ?, ?, ?);", (u_number, password, first_name, last_name, email, phone_number, dob))
         print("Account created successfully. You can now log in.")
+
 
 def faculty_login(db):
     print("=== Faculty Login ===")
@@ -190,7 +201,6 @@ def faculty_menu(db, email):
                 print("=== Faculty Information ===")
                 print(f"Email: {faculty_info['Email']}")
                 print(f"Name: {faculty_info['FirstName']} {faculty_info['LastName']}")
-                # Add more information as needed
             elif choice == '2':
                 manage_classes(email, db)
             elif choice == '3':
@@ -208,7 +218,6 @@ def get_faculty_info(email, db):
             'Email': faculty_info[0][3],
             'FirstName': faculty_info[0][1],
             'LastName': faculty_info[0][2]
-            # Add more fields as needed
         }
     else:
         return None

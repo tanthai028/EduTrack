@@ -28,7 +28,7 @@ class Database:
 
         # Create tables
         self.execute_query('''CREATE TABLE IF NOT EXISTS "Student" (
-        "StudentID" TEXT PRIMARY KEY,
+        "StudentID" TEXT PRIMARY KEY CHECK(length("StudentID") = 9),
         "FirstName" TEXT NOT NULL,
         "LastName" TEXT NOT NULL,
         "Email" TEXT NOT NULL UNIQUE,
