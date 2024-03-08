@@ -1,6 +1,5 @@
 import sqlite3
 import os
-from tabulate import tabulate
 
 class Database:
     def __init__(self, db_filename='school_database.db'):
@@ -18,15 +17,6 @@ class Database:
             print(f"Error connecting to database: {e}")
 
     def setupdatabase(self):
-        # Create database file if it doesn't exist
-        try:
-            open(self.db_path, 'r').close()  # Check if file exists
-            print(f"Database file '{self.db_path}' already exists.")
-        except FileNotFoundError:
-            open(self.db_path, 'w').close()  # Create file if it doesn't exist
-            print(f"Database file '{self.db_path}' created.")
-
-        # Create tables
         self.execute_query('''CREATE TABLE IF NOT EXISTS "Student" (
         "StudentID" TEXT PRIMARY KEY CHECK(length("StudentID") = 9),
         "FirstName" TEXT NOT NULL,
@@ -81,8 +71,8 @@ class Database:
             else:
                 cursor.execute(query)
             
-            # if query starts with 'SELECT' or 'PRAGMA'
-            if query.strip().upper().startswith('SELECT') or query.strip().upper().startswith('PRAGMA'):
+            # if query starts with 'SELECT'
+            if query.strip().upper().startswith('SELECT'):
                 return cursor.fetchall()
             
             # if query starts with 'INSERT'
