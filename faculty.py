@@ -5,7 +5,7 @@ from interface import *
 def faculty_menu(db, email):
     while True:
         print_menu(faculty_menu_cfg)
-        choice = input("Enter your choice (1-3): ")
+        choice = input("> ")
         os.system('cls')
 
         match choice:
@@ -22,6 +22,7 @@ def faculty_menu(db, email):
                 return
             case _:
                 print_invalid_msg(faculty_menu_cfg)
+
 
 def faculty_login(db):
     while True:
@@ -41,6 +42,7 @@ def faculty_login(db):
                     print("Invalid credentials. Please try again.")
             case '2':
                 create_faculty_account(db)
+            case '3':
                 return
             case _:
                 print_invalid_msg(faculty_login_menu_cfg)

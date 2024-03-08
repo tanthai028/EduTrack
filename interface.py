@@ -43,7 +43,7 @@ student_menu_cfg = {
 
 faculty_login_menu_cfg = {
     'title': '=== Faculty Login ===',
-    'options': [
+    'links': [
         'Login',
         'Register',
         'Exit'
@@ -52,8 +52,9 @@ faculty_login_menu_cfg = {
 
 faculty_menu_cfg = {
     'title': '=== Faculty Menu ===',
-    'options': [
+    'links': [
         'View Faculty Information',
-        'Manage Classes'
+        'Manage Classes',
+        'Exit',
     ]
 }
