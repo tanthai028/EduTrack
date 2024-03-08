@@ -86,7 +86,7 @@ class Database:
     def user_query(self, query):
         """Executes a user sql query."""
         result = self.execute_query(query)
-        print(f"{query}\n{result}")
+        print(result)
 
     def close(self):
         """
