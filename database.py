@@ -17,15 +17,6 @@ class Database:
             print(f"Error connecting to database: {e}")
 
     def setupdatabase(self):
-        # Create database file if it doesn't exist
-        try:
-            open(self.db_path, 'r').close()  # Check if file exists
-            print(f"Database file '{self.db_path}' already exists.")
-        except FileNotFoundError:
-            open(self.db_path, 'w').close()  # Create file if it doesn't exist
-            print(f"Database file '{self.db_path}' created.")
-
-        # Create tables
         self.execute_query('''CREATE TABLE IF NOT EXISTS "Student" (
         "StudentID" TEXT PRIMARY KEY,
         "FirstName" TEXT NOT NULL,
