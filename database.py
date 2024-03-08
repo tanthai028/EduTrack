@@ -42,7 +42,8 @@ class Database:
         "FirstName" TEXT NOT NULL,
         "LastName" TEXT NOT NULL,
         "Email" TEXT NOT NULL UNIQUE,
-        "OfficeNumber" TEXT
+        "OfficeNumber" TEXT,
+        "Password" TEXT NOT NULL
         )''')
 
         self.execute_query('''CREATE TABLE IF NOT EXISTS "Enrollment" (

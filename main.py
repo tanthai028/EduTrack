@@ -69,15 +69,15 @@ def validate_student_login(u_number, password, db):
         return False
 
 def student_menu(db, u_number):
-    print("=== Student Menu ===")
-    print("1. View Student Information")
-    print("2. Search Classes")
-    print("3. Register for Classes")
-    print("4. Logout")
-
     student_info = get_student_info(u_number, db)
     if student_info:
         while True:
+            print("=== Student Menu ===")
+            print("1. View Student Information")
+            print("2. Search Classes")
+            print("3. Register for Classes")
+            print("4. Logout")
+
             choice = input("Enter your choice (1-4): ")
 
             if choice == '1':
