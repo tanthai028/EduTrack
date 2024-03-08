@@ -45,7 +45,7 @@ def student_menu(db, u_number):
                 print("Logging out...")
                 return
             case _:
-                print("Invalid choice. Please enter a number from 1 to 4.")
+                print_invalid_msg(student_menu_cfg)
 
 def student_login(db):
     while True:
@@ -66,11 +66,10 @@ def student_login(db):
                     print("Student not found or incorrect password. Please re-enter your U number and password.")
             case '2':
                 create_student_account(db)
-                return
             case '3':
                 return
             case _:
-                print("Invalid choice. Please enter 1, 2, or 3.")
+                print_invalid_msg(student_login_menu_cfg)
 
 def validate_student_login(u_number, password, db):
     # Check if the user exists in the database and the provided credentials are correct
@@ -111,8 +110,8 @@ def create_student_account(db):
     print("=== Student Registration ===")
     u_number = input("Enter your U number: ")
     password = input("Create a password: ")
-    first_name = input("Enter your first name: ")
-    last_name = input("Enter your last name: ")
+    first_name = input("Enter your first name: ").capitalize()
+    last_name = input("Enter your last name: ").capitalize()
     email = input("Enter your email: ")
     phone_number = input("Enter your phone number: ")
     dob = input("Enter your date of birth (YYYY-MM-DD): ")
