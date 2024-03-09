@@ -14,10 +14,11 @@ def faculty_menu(db, email):
                 print("=== Faculty Information ===")
                 print(f"Email: {faculty_info['Email']}")
                 print(f"Name: {faculty_info['FirstName']} {faculty_info['LastName']}")
-            # Add more information as needed
             case '2':
-                manage_classes(email, db)
+                create_class(email, db)
             case '3':
+                manage_classes(email, db)
+            case '4':
                 print("Logging out...")
                 return
             case _:

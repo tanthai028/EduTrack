@@ -54,6 +54,7 @@ faculty_menu_cfg = {
     'title': '=== Faculty Menu ===',
     'links': [
         'View Faculty Information',
+        'Create Class',
         'Manage Classes',
         'Exit',
     ]

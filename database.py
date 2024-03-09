@@ -48,9 +48,11 @@ class Database:
 
         self.execute_query('''CREATE TABLE IF NOT EXISTS "Course" (
         "CourseID" TEXT PRIMARY KEY,
+        "FacultyEmail" TEXT NOT NULL,
         "CourseName" TEXT NOT NULL,
         "CourseDescription" TEXT,
-        "CreditHours" TEXT NOT NULL
+        "CreditHours" TEXT NOT NULL,
+        FOREIGN KEY ("FacultyEmail") REFERENCES "Instructor" ("Email")
         )''')
 
     # Remaining methods remain unchanged...

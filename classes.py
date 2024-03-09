@@ -11,11 +11,50 @@ def search_classes(db):
             # You can print more information as needed
     else:
         print("No classes found matching the keyword.")
+def create_class(email,db):
+    print("=== Create Class ===")
+    course_id = input("Enter course ID: ")
+    course_name = input("Enter course name: ")
+    course_description = input("Enter course description: ")
+    credit_hours = int(input("Enter credit hours: "))
 
-def register_classes(u_number, db):
-    # Implementation of class registration
-    return
+    
+    # Insert the new class into the database
+    query = "INSERT INTO Course (CourseID, CourseName, CourseDescription, CreditHours, FacultyEmail) VALUES (?, ?, ?, ?, ?);"
+    params = (course_id,course_name, course_description, credit_hours, email)
+    db.execute_query(query, params)
+    print("Class created successfully.")
+
 
 def manage_classes(email, db):
-    # Implementation for faculty to manage classes
+    print("=== Manage Classes ===")
+    # Fetch classes managed by the faculty member
+    query = "SELECT * FROM Course WHERE FacultyEmail = ?;"
+    params = (email,)
+    faculty_classes = db.execute_query(query, params)
+    
+    if faculty_classes:
+        # Display classes managed by the faculty member
+        print("Classes Managed by You:")
+        for row in faculty_classes:
+            print(f"CourseID: {row[0]}, Course Name: {row[2]}, Course Description: {row[3]}, Credit Hours: {row[4]}")
+        
+        # Offer options for managing classes (e.g., add, update, remove)
+        option = input("Enter 'add', 'update', or 'remove' to manage classes: ")
+        if option == 'add':
+            # Implement logic to add a new class
+            pass
+        elif option == 'update':
+            # Implement logic to update an existing class
+            pass
+        elif option == 'remove':
+            # Implement logic to remove a class
+            pass
+        else:
+            print("Invalid option.")
+    else:
+        print("You are not managing any classes.")
+        
+def register_classes(u_number, db):
+    # Implementation of class registration
     return
