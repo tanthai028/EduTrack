@@ -43,19 +43,76 @@ def manage_classes(email, db):
         
         # Offer options for managing classes (e.g., add, update, remove)
         option = input("Enter 'add', 'update', or 'remove' to manage classes: ")
-        if option == 'add':
-            # Implement logic to add a new class
-            pass
-        elif option == 'update':
-            # Implement logic to update an existing class
-            pass
+        if option == 'update':
+            # Allow the instructor to select a class to update
+            course_id_to_update = input("Enter CourseID of the class to update: ")
+            # Check if the instructor manages the selected class
+            if any(course_id_to_update == row[0] for row in faculty_classes):
+                # Implement logic to update an existing class
+                update_class(course_id_to_update, db)
+            else:
+                print("You don't manage the selected class.")
         elif option == 'remove':
-            # Implement logic to remove a class
-            pass
+            # Allow the instructor to select a class to remove
+            course_id_to_remove = input("Enter CourseID of the class to remove: ")
+            # Check if the instructor manages the selected class
+            if any(course_id_to_remove == row[0] for row in faculty_classes):
+                # Implement logic to remove a class
+                remove_class(course_id_to_remove, db)
+            else:
+                print("You don't manage the selected class.")
         else:
             print("Invalid option.")
     else:
         print("You are not managing any classes.")
+
+def update_class(course_id, db):
+    print(f"=== Update Class {course_id} ===")
+    # Fetch information of the class to be updated
+    query = "SELECT * FROM Course WHERE CourseID = ?;"
+    params = (course_id,)
+    class_info = db.execute_query(query, params)
+    
+    if class_info:
+        print("Current Class Information:")
+        print(f"Course Name: {class_info[0][2]}")
+        print(f"Current Course Description: {class_info[0][3]}")
+        print(f"Current Credit Hours: {class_info[0][4]}")
+        
+        # Get updated information from the user
+        new_course_name = input("Enter new course name (leave blank to keep current): ")
+        new_course_description = input("Enter new course description (leave blank to keep current): ")
+        new_credit_hours = input("Enter new credit hours (leave blank to keep current): ")
+        
+        # Update the class information in the database
+        if new_course_name or new_course_description or new_credit_hours:
+            query = "UPDATE Course SET CourseName = COALESCE(?, CourseName), CourseDescription = COALESCE(?, CourseDescription), CreditHours = COALESCE(?, CreditHours) WHERE CourseID = ?;"
+            params = (new_course_name, new_course_description, new_credit_hours, course_id)
+            db.execute_query(query, params)
+            print("Class updated successfully.")
+        else:
+            print("No changes made.")
+    else:
+        print(f"Class with CourseID: {course_id} not found.")
+
+def remove_class(course_id, db):
+    print(f"=== Remove Class {course_id} ===")
+    # Confirm with the instructor before removing the class
+    confirmation = input(f"Are you sure you want to remove the class with CourseID {course_id}? (yes/no): ")
+    if confirmation.lower() == 'yes':
+        # Remove the class and associated enrollments from the database
+        query_remove_enrollments = "DELETE FROM Enrollment WHERE CourseID = ?;"
+        params_remove_enrollments = (course_id,)
+        db.execute_query(query_remove_enrollments, params_remove_enrollments)
+        
+        query_remove_class = "DELETE FROM Course WHERE CourseID = ?;"
+        params_remove_class = (course_id,)
+        db.execute_query(query_remove_class, params_remove_class)
+        
+        print("Class removed successfully.")
+    else:
+        print("Removal canceled.")
+
         
 def register_classes(u_number, db):
     print("=== Register Classes ===")
@@ -64,13 +121,8 @@ def register_classes(u_number, db):
     available_classes = db.execute_query(query)
     
     if available_classes:
-        # Display available classes
-        print("Available Classes:")
-        for row in available_classes:
-            print(f"CourseID: {row[0]}, Course Name: {row[2]}, Credit Hours: {row[4]}")
-        
         # Allow the user to select classes to register
-        selected_courses = input("Enter CourseIDs separated by commas to register (e.g., CourseID1, CourseID2): ").split(",")
+        selected_courses = input("Enter CourseIDs separated by commas to register or a single CourseID (e.g., CourseID1, CourseID2): ").split(",")
         
         # Register selected classes
         for course_id in selected_courses:
