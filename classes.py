@@ -1,3 +1,5 @@
+from datetime import datetime
+
 def search_classes(db):
     print("=== Search Classes ===")
     keyword = input("Enter keyword to search for classes: ")
@@ -56,5 +58,71 @@ def manage_classes(email, db):
         print("You are not managing any classes.")
         
 def register_classes(u_number, db):
-    # Implementation of class registration
-    return
+    print("=== Register Classes ===")
+    # Fetch available classes
+    query = "SELECT * FROM Course;"
+    available_classes = db.execute_query(query)
+    
+    if available_classes:
+        # Display available classes
+        print("Available Classes:")
+        for row in available_classes:
+            print(f"CourseID: {row[0]}, Course Name: {row[2]}, Credit Hours: {row[4]}")
+        
+        # Allow the user to select classes to register
+        selected_courses = input("Enter CourseIDs separated by commas to register (e.g., CourseID1, CourseID2): ").split(",")
+        
+        # Register selected classes
+        for course_id in selected_courses:
+            # Check if the course exists
+            query = "SELECT * FROM Course WHERE CourseID = ?;"
+            params = (course_id.strip(),)
+            course = db.execute_query(query, params)
+            if course:
+                # Insert the enrollment into the database
+                enrollment_id = f"{u_number}_{course_id.strip()}"
+                enrollment_date = datetime.now().strftime("%Y-%m-%d")
+                query = "INSERT INTO Enrollment (EnrollmentID, StudentID, CourseID, EnrollmentDate) VALUES (?, ?, ?, ?);"
+                params = (enrollment_id, u_number, course_id.strip(), enrollment_date)
+                db.execute_query(query, params)
+                print(f"Successfully registered for CourseID: {course_id.strip()}")
+            else:
+                print(f"CourseID: {course_id.strip()} does not exist.")
+    else:
+        print("No classes available for registration.")
+def unregister_a_class(u_number, db):
+    print("=== Unregister a Class ===")
+    # Fetch classes registered by the student
+    query = "SELECT * FROM Enrollment WHERE StudentID = ?;"
+    params = (u_number,)
+    registered_classes = db.execute_query(query, params)
+    
+    if registered_classes:
+        # Display classes registered by the student
+        print("Classes Registered by You:")
+        for row in registered_classes:
+            course_id = row[2]
+            query = "SELECT * FROM Course WHERE CourseID = ?;"
+            params = (course_id,)
+            course_info = db.execute_query(query, params)
+            if course_info:
+                print(f"CourseID: {course_info[0][0]}, Course Name: {course_info[0][2]}, Credit Hours: {course_info[0][4]}")
+        
+        # Allow the user to select a class to unregister
+        class_to_unregister = input("Enter CourseID to unregister: ")
+        
+        # Check if the user is registered for the selected class
+        query = "SELECT * FROM Enrollment WHERE StudentID = ? AND CourseID = ?;"
+        params = (u_number, class_to_unregister)
+        existing_registration = db.execute_query(query, params)
+        
+        if existing_registration:
+            # Unregister the class
+            query = "DELETE FROM Enrollment WHERE StudentID = ? AND CourseID = ?;"
+            params = (u_number, class_to_unregister)
+            db.execute_query(query, params)
+            print(f"Successfully unregistered from CourseID: {class_to_unregister}")
+        else:
+            print("You are not registered for the selected class.")
+    else:
+        print("You are not registered for any classes.")

@@ -38,10 +38,12 @@ def student_menu(db, u_number):
             case '3':
                 register_classes(u_number, db)
             case '4':
+                unregister_a_class(u_number, db)
+            case '5':
                 delete_student(db, u_number)
                 print(f"Successfully Deleted User: {u_number}")
                 return
-            case '5':
+            case '6':
                 print("Logging out...")
                 return
             case _:
