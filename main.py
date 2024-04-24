@@ -1,34 +1,19 @@
-import sys, os
-from database import Database
-from interface import *
-from student import student_login
-from faculty import faculty_login
+from db import Database
+from account import login, register
+from menu import Menu
 
+def main_menu(db):
+    options = [
+        ("Login", login, (db,)),
+        ("Register", register, (db,)),
+        ("Exit", None, ())  # None here makes the menu exit
+    ]
+    title = "=== EduTrack ==="
+    menu = Menu(title, options)
+    menu.run()
 
-def main():
+if __name__ == "__main__":
     db = Database('school_database.db')
-    db.setupdatabase()  # Setup the initial database
-
-    try:
-        while True:
-            print_menu(main_menu_cfg)
-            choice = input("> ")
-            os.system('cls')
-            match choice:
-                case '1':
-                    student_login(db)
-                case '2':
-                    faculty_login(db)
-                case '3':
-                    db.close()
-                    print("Exiting...")
-                    break
-                case _:
-                    print_invalid_msg(main_menu_cfg)
-    except KeyboardInterrupt:
-        print("\nProgram interrupted. Closing database...")
-        db.close()
-        sys.exit()
-
-if __name__ == '__main__':
-    main()
+    db.setup_database()  # Setup the initial database
+    main_menu(db)
+    db.close()

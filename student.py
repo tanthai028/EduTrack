@@ -1,98 +1,8 @@
-import os
-from classes import *
-from interface import *
+from menu import Menu
 
-def delete_student(db, student_id):
-    delete_enrollments_query = '''DELETE FROM Enrollment WHERE StudentID = ?'''
-    db.execute_query(delete_enrollments_query, (student_id,))
-
-    delete_student_query = '''DELETE FROM Student WHERE StudentID = ?'''
-    db.execute_query(delete_student_query, (student_id,))
-
-def print_student_info(student_info):
-    title = "=== Student Information ==="
-    details = [
-        f"U Number: {student_info.get('StudentID', 'N/A')}",
-        f"Name: {student_info.get('FirstName', 'N/A')} {student_info.get('LastName', 'N/A')}",
-        f"Email: {student_info.get('Email', 'N/A')}",
-        f"Phone Number: {student_info.get('PhoneNumber', 'N/A')}",
-        f"Date of Birth: {student_info.get('DateOfBirth', 'N/A')}",
-    ]
-    
-    print(title)
-    for detail in details:
-        print(detail)
-
-def student_menu(db, u_number):
-    while True:
-        print_menu(student_menu_cfg)
-        user_input = input("> ")
-        os.system('cls')
-
-        match user_input:
-            case '1':
-                student_info = get_student_info(u_number, db)
-                print_student_info(student_info)
-            case '2':
-                search_classes(db)
-            case '3':
-                register_classes(u_number, db)
-            case '4':
-                delete_student(db, u_number)
-                print(f"Successfully Deleted User: {u_number}")
-                return
-            case '5':
-                print("Logging out...")
-                return
-            case _:
-                print_invalid_msg(student_menu_cfg)
-
-def student_login(db):
-    while True:
-        print_menu(student_login_menu_cfg)
-        user_input = input("> ")
-        os.system('cls')
-
-        match user_input:
-            case '1': 
-                u_number = input("Enter your U number: ")
-                password = input("Enter your password: ")
-                student_info = validate_student_login(u_number, password, db)
-                if student_info:
-                    print("Login successful.")
-                    student_menu(db, u_number)
-                    return
-                else:
-                    print("Student not found or incorrect password. Please re-enter your U number and password.")
-            case '2':
-                create_student_account(db)
-            case '3':
-                return
-            case _:
-                print_invalid_msg(student_login_menu_cfg)
-
-def validate_student_login(u_number, password, db):
-    # Check if the user exists in the database and the provided credentials are correct
-    query = "SELECT * FROM Student WHERE StudentID = ? AND Password = ?;"
-    params = (u_number, password)
-    student_info = db.execute_query(query, params)
-    if student_info and len(student_info) > 0:
-        return {
-            'StudentID': student_info[0][0],
-            'FirstName': student_info[0][1],
-            'LastName': student_info[0][2],
-            'Email': student_info[0][3],
-            'PhoneNumber': student_info[0][4],
-            'DateOfBirth': student_info[0][5]
-        }
-    else:
-        return False
-
-
-
-def get_student_info(u_number, db):
-    query = "SELECT * FROM Student WHERE StudentID = ?;"
-    params = (u_number,)
+def get_student_info(db, uid):
+    query = "SELECT * FROM Person WHERE PersonID = ? AND Role = 'Student';"
+    params = (uid,)
     student_info = db.execute_query(query, params)
     if student_info:
         return {
@@ -105,21 +15,56 @@ def get_student_info(u_number, db):
         }
     else:
         return None
-    
-def create_student_account(db):
-    print("=== Student Registration ===")
-    u_number = input("Enter your U number: ")
-    password = input("Create a password: ")
-    first_name = input("Enter your first name: ").capitalize()
-    last_name = input("Enter your last name: ").capitalize()
-    email = input("Enter your email: ")
-    phone_number = input("Enter your phone number: ")
-    dob = input("Enter your date of birth (YYYY-MM-DD): ")
 
-    # Check if the user already exists
-    existing_user = db.execute_query("SELECT * FROM Student WHERE StudentID = ?;", (u_number,))
-    if existing_user:
-        print("User already exists. Please log in.")
+def view_details(db, uid):
+    student_info = get_student_info(db, uid)
+    # print(student_info)
+
+    print("=== Student Information ===")
+    details = [
+        f"U Number: {student_info.get('StudentID', 'N/A')}",
+        f"Name: {student_info.get('FirstName', 'N/A')} {student_info.get('LastName', 'N/A')}",
+        f"Email: {student_info.get('Email', 'N/A')}",
+        f"Phone Number: {student_info.get('PhoneNumber', 'N/A')}",
+        f"Date of Birth: {student_info.get('DateOfBirth', 'N/A')}",
+    ]
+    for detail in details:
+        print(detail)
+    
+    print()
+
+def search_classes(db):
+    print("=== Search Classes ===")
+    keyword = input("Enter keyword to search for classes: ")
+    query = "SELECT CourseID, CourseName, CourseDescription, CreditHours FROM Course WHERE CourseName LIKE ?;"
+    params = (f'%{keyword}%',)
+    result = db.execute_query(query, params)
+    if result:
+        print("Search Results:")
+        for row in result:
+            print(f"CourseID: {row[0]}, Course Name: {row[1]}, Course Description: {row[2]}, Credit Hours: {row[3]}")
     else:
-        db.execute_query("INSERT INTO Student (StudentID, Password, FirstName, LastName, Email, PhoneNumber, DateOfBirth) VALUES (?, ?, ?, ?, ?, ?, ?);", (u_number, password, first_name, last_name, email, phone_number, dob))
-        print("Account created successfully. You can now log in.")
+        print("No classes found matching the keyword.")
+
+def delete_student(db, person_id):
+    delete_student_details_query = '''DELETE FROM Student WHERE PersonID = ?;'''
+    db.execute_query(delete_student_details_query, (person_id,))
+
+    delete_enrollments_query = '''DELETE FROM Enrollment WHERE PersonID = ?;'''
+    db.execute_query(delete_enrollments_query, (person_id,))
+
+    delete_person_query = '''DELETE FROM Person WHERE PersonID = ?;'''
+    db.execute_query(delete_person_query, (person_id,))
+    input("Student and all related records have been deleted successfully.")
+
+def student_menu(db, uid):
+    options = [
+        ("View Student Information", view_details, (db, uid)),
+        ("Search Classes", search_classes, (db, )),
+        ("Delete Account", delete_student, (db, uid)),
+        ("Back", None, ())  # None here makes the menu exit
+    ]
+    title = "=== Student Menu ==="
+    menu = Menu(title, options)
+    menu.uid = uid
+    menu.run()
