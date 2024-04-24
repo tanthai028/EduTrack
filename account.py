@@ -115,7 +115,7 @@ def register(db):
     fname = input('First Name: ').capitalize()
     lname = input('Last Name: ').capitalize()
     email = fname.lower() + lname.lower() + '@usf.edu'
-    print(email)
+    print(f'Your email is: {email}')
 
     password, conf_password = None, None
     while True:
