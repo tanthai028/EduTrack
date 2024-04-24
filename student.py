@@ -22,6 +22,29 @@ def print_student_info(student_info):
     print(title)
     for detail in details:
         print(detail)
+        
+def edit_student_info(u_number, db):
+    student_info = get_student_info(u_number, db)
+    if student_info is None:
+        print("Student not found.")
+        return
+
+    print("Select information to edit:")
+    print("1. First Name")
+    print("2. Last Name")
+    # Add more fields as necessary
+
+    choice = input("Enter your choice: ")
+    new_value = input("Enter the new value: ")
+
+    if choice == '1':
+        query = "UPDATE Student SET FirstName = ? WHERE StudentID = ?;"
+    elif choice == '2':
+        query = "UPDATE Student SET LastName = ? WHERE StudentID = ?;"
+    # Add more cases as necessary
+
+    db.execute_query(query, (new_value, u_number))
+    print("Information updated successfully.")
 
 def student_menu(db, u_number):
     while True:
@@ -40,10 +63,12 @@ def student_menu(db, u_number):
             case '4':
                 unregister_a_class(u_number, db)
             case '5':
+                edit_student_info(u_number, db)
+            case '6':
                 delete_student(db, u_number)
                 print(f"Successfully Deleted User: {u_number}")
                 return
-            case '6':
+            case '7':
                 print("Logging out...")
                 return
             case _:
@@ -125,3 +150,26 @@ def create_student_account(db):
     else:
         db.execute_query("INSERT INTO Student (StudentID, Password, FirstName, LastName, Email, PhoneNumber, DateOfBirth) VALUES (?, ?, ?, ?, ?, ?, ?);", (u_number, password, first_name, last_name, email, phone_number, dob))
         print("Account created successfully. You can now log in.")
+    
+def edit_student_info(u_number, db):
+    student_info = get_student_info(u_number, db)
+    if student_info is None:
+        print("Student not found.")
+        return
+
+    print("Select information to edit:")
+    print("1. First Name")
+    print("2. Last Name")
+    # Add more fields as necessary
+
+    choice = input("Enter your choice: ")
+    new_value = input("Enter the new value: ")
+
+    if choice == '1':
+        query = "UPDATE Student SET FirstName = ? WHERE StudentID = ?;"
+    elif choice == '2':
+        query = "UPDATE Student SET LastName = ? WHERE StudentID = ?;"
+    # Add more cases as necessary
+
+    db.execute_query(query, (new_value, u_number))
+    print("Information updated successfully.")

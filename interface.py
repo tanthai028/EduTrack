@@ -37,6 +37,7 @@ student_menu_cfg = {
         'Search Classes',
         'Register for Classes',
         'Unregister for a Class',
+        'Edit Student Information',
         'Delete Account',
         'Logout',
     ]
