@@ -132,6 +132,7 @@ def register(db):
     uid = create_account(db, role, fname, lname, email, password)
     clear_screen()
     if uid:
+        print('Logged in!')
         if role == 'Student':
             student_menu(db, uid)
         elif role == 'Professor':
