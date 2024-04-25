@@ -68,7 +68,7 @@ def create_account(db, role, fname, lname, email, password):
             
             clear_screen()
             print(f"{role} account created successfully.")
-            print(f"Your UID is {uid}")
+            input(f"Your UID is {uid}")
             return uid
     except Exception as e:
         input(f"An error occurred while creating the account: {str(e)}")
@@ -76,13 +76,18 @@ def create_account(db, role, fname, lname, email, password):
 def login(db):
     uid = ''
     while True:
-        uid = input("Enter your UID: ")
-        if not valid_uid(uid):
-            clear_screen()
-            print('Invalid UID.')
-            continue
+        try:
+            uid = input("Enter your UID: ")
+            if not valid_uid(uid):
+                clear_screen()
+                print('Invalid UID.')
+                continue
 
-        break
+            break
+        except KeyboardInterrupt:
+            clear_screen()
+            print('Back...')
+            return False
 
     reformat_uid(uid)
     password = input("Enter your password: ")
