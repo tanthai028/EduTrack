@@ -1,5 +1,4 @@
 from helpers import clear_screen
-import sys
 
 class Menu:
     def __init__(self, title, options):
@@ -32,4 +31,4 @@ class Menu:
                     print("Invalid option, please try again.")
         except KeyboardInterrupt:
             print("\nProgram interrupted. Closing database...")
-            sys.exit()
+            return

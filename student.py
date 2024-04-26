@@ -1,5 +1,5 @@
 from menu import Menu
-from clases import *
+from EduTrack.classes import *
 def get_student_info(db, uid):
     query = "SELECT * FROM Person WHERE PersonID = ? AND Role = 'Student';"
     params = (uid,)
@@ -18,7 +18,6 @@ def get_student_info(db, uid):
 
 def view_details(db, uid):
     student_info = get_student_info(db, uid)
-    # print(student_info)
 
     print("=== Student Information ===")
     details = [

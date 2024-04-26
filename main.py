@@ -1,6 +1,7 @@
 from db import Database
 from account import login, register
 from menu import Menu
+from helpers import clear_screen
 
 def main_menu(db):
     options = [
@@ -13,6 +14,7 @@ def main_menu(db):
     menu.run()
 
 if __name__ == "__main__":
+    clear_screen()
     db = Database('school_database.db')
     db.setup_database()  # Setup the initial database
     main_menu(db)

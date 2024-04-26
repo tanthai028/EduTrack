@@ -1,5 +1,6 @@
 from menu import Menu
-from clases import *
+from classes import *
+
 def get_prof_info(db, uid):
     query = "SELECT * FROM Person WHERE PersonID = ? AND Role = 'Professor';"
     params = (uid,)
