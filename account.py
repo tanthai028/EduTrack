@@ -84,7 +84,7 @@ def login(db):
                 continue
             break
 
-        reformat_uid(uid)
+        uid = reformat_uid(uid)
         password = input("Enter your password: ")
 
         try:
