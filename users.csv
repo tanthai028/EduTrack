@@ -1,0 +1,22 @@
+PersonID,FirstName,LastName,Email,PhoneNumber,DateOfBirth,Password,Role
+U00000001,John,Doe,johndoe@usf.edu,8133882641,1900-01-00,123,Professor
+U00000002,Mary,Jane,maryjane@usf.edu,8131565297,2016-04-25,123,Professor
+U00000003,Robert,Williams,robertwilliams@usf.edu,8135585693,2016-06-23,123,Professor
+U00000004,Allen,Le,allenle@usf.edu,8137774858,2016-03-30,123,Professor
+U00000005,Jane,Smith,janesmith@usf.edu,8133661128,2016-02-05,123,Professor
+U00000006,Alex,Vo,alexvo@usf.edu,8134231823,2016-08-17,123,Professor
+U00000007,Daniel,Huyhn,danielhuyhn@usf.edu,8130023227,2016-06-30,123,Professor
+U00000008,Brody,Tran,brodytran@usf.edu,8139487967,2016-10-07,123,Professor
+U00000009,Celeste,Winter,celestewinter@usf.edu,8139114017,2016-02-29,123,Professor
+U00000010,Leroy,Lam,leroylam@usf.edu,8131962857,2016-11-26,123,Student
+U00000011,Bibi,Bradford,bibibradford@usf.edu,8138955372,2016-06-02,123,Student
+U00000012,Vincent,Haas,vincenthaas@usf.edu,8137841808,2016-07-05,123,Student
+U00000013,Travis,Mosley,travismosley@usf.edu,8139935580,2016-11-05,123,Student
+U00000014,Renee,John,reneejohn@usf.edu,8135489170,2016-01-15,123,Student
+U00000015,Shauna,Newman,shaunanewman@usf.edu,8137513408,2016-01-22,123,Student
+U00000016,Liana,Clay,lianaclay@usf.edu,8135159810,2016-06-22,123,Student
+U00000017,Rory ,Oneal,roryoneal@usf.edu,8139671386,2016-08-11,123,Student
+U00000018,Marion ,Bush,marionbush@usf.edu,8139357216,2016-11-13,123,Student
+,,,,,,,
+,,,,,,,
+,,,,,,,

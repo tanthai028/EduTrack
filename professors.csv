@@ -1,9 +1,0 @@
-PersonID,FirstName,LastName,Email,PhoneNumber,DateOfBirth,Password,Role
-U00000001,John,Doe,johndoe@usf.edu,,,123,Professor
-U00000002,Mary,Jane,maryjane@usf.edu,,,123,Professor
-U00000003,Robert,Williams,robertwilliams@usf.edu,,,123,Professor
-U00000004,Allen,Le,allenle@usf.edu,,,123,Professor
-U00000005,Jane,Smith,janesmith@usf.edu,,,123,Professor
-U00000006,Alex,Vo,alexvo@usf.edu,,,123,Professor
-U00000007,Daniel,Huyhn,danielhuyhn@usf.edu,,,123,Professor
-U00000008,Brody,Tran,brodytran@usf.edu,,,123,Professor

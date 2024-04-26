@@ -66,8 +66,10 @@ class Database:
             self.execute_query('''ALTER TABLE Student ADD COLUMN TotalCreditHrs INTEGER DEFAULT 0;''')
 
         self.import_data('courses.csv', 'Course', ['CourseID', 'CourseName', 'CourseDescription', 'CreditHours', 'ProfessorID'])
-        self.import_data('professors.csv', 'Person', ['PersonID', 'FirstName', 'LastName', 'Email', 'PhoneNumber', 'DateOfBirth', 'Password', 'Role'])
-        self.import_data('professors.csv', 'Professor', ['PersonID', 'OfficeNumber'])
+        self.import_data('users.csv', 'Person', ['PersonID', 'FirstName', 'LastName', 'Email', 'PhoneNumber', 'DateOfBirth', 'Password', 'Role'])
+        self.import_data('users.csv', 'Professor', ['PersonID'])
+        self.import_data('users.csv', 'Student', ['PersonID'])
+
 
     def column_exists(self, table_name, column_name):
         """ Check if a specific column exists in a given table """
