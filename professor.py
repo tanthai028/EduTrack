@@ -33,8 +33,6 @@ def view_details(db, uid):
     
     print()
 
-
-
 def delete_prof(db, uid):
     query = '''DELETE FROM Person WHERE PersonID = ?;'''
     db.execute_query(query, (uid,))
@@ -46,8 +44,8 @@ def professor_menu(db, uid):
         ("Create Class", create_class, (db,uid)),
         ("Manage Classes", manage_classes, (db,uid)),
         ("Delete Account", delete_prof, (db,uid)),
-        ("Print Students for a Class", print_students_for_class, (uid,1, None)),
-        ("Exit", None)  # None here makes the menu exit
+        ("Print Students for a Class", print_students_for_class, (uid, db)),
+        ("Exit", None, ())  # None here makes the menu exit
     ]
     title = "=== Professor Menu ==="
     menu = Menu(title, options)
