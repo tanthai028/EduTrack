@@ -1,5 +1,6 @@
 from menu import Menu
-from EduTrack.classes import *
+from classes import *
+
 def get_student_info(db, uid):
     query = "SELECT * FROM Person WHERE PersonID = ? AND Role = 'Student';"
     params = (uid,)
