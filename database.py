@@ -1,6 +1,6 @@
 import sqlite3
 import os
-from helpers import import_data
+import csv
 
 class Database:
     def __init__(self, db_filename='school_database.db'):
@@ -65,9 +65,9 @@ class Database:
         if not self.column_exists('Student', 'TotalCreditHrs'):
             self.execute_query('''ALTER TABLE Student ADD COLUMN TotalCreditHrs INTEGER DEFAULT 0;''')
 
-        import_data(self, 'courses.csv', 'Course', ['CourseID', 'CourseName', 'CourseDescription', 'CreditHours', 'ProfessorID'])
-        import_data(self, 'professors.csv', 'Person', ['PersonID', 'FirstName', 'LastName', 'Email', 'PhoneNumber', 'DateOfBirth', 'Password', 'Role'])
-        import_data(self, 'professors.csv', 'Professor', ['PersonID', 'OfficeNumber'])
+        self.import_data('courses.csv', 'Course', ['CourseID', 'CourseName', 'CourseDescription', 'CreditHours', 'ProfessorID'])
+        self.import_data('professors.csv', 'Person', ['PersonID', 'FirstName', 'LastName', 'Email', 'PhoneNumber', 'DateOfBirth', 'Password', 'Role'])
+        self.import_data('professors.csv', 'Professor', ['PersonID', 'OfficeNumber'])
 
     def column_exists(self, table_name, column_name):
         """ Check if a specific column exists in a given table """
@@ -80,6 +80,15 @@ class Database:
         """ Check if the specified role exists for the given person """
         results = self.execute_query("SELECT 1 FROM Person WHERE PersonID = ? AND Role = ?;", (person_id, role))
         return len(results) > 0
+    
+    def import_data(self, csv_path, table, columns):
+        with open(csv_path, newline='', encoding='utf-8') as csvfile:
+            reader = csv.DictReader(csvfile)
+            for row in reader:
+                data_tuple = tuple(row[col] if col in row else None for col in columns)
+                placeholders = ', '.join(['?'] * len(columns))
+                sql = f'INSERT OR IGNORE INTO {table} ({", ".join(columns)}) VALUES ({placeholders});'
+                self.execute_query(sql, data_tuple)
 
     def execute_query(self, query, params=None):
         """
@@ -91,23 +100,17 @@ class Database:
         """
         cursor = self.conn.cursor()
         try:
-            # Does the query contain parameters?
-            if params:
+            if params: 
                 cursor.execute(query, params)
             else:
                 cursor.execute(query)
-            
-            # if query starts with 'SELECT'
             if query.strip().upper().startswith('SELECT'):
                 return cursor.fetchall()
-            
-            # if query starts with 'INSERT'
             else:
                 self.conn.commit()
                 if query.strip().upper().startswith('INSERT'):
                     return cursor.lastrowid
                 return None
-                
         except sqlite3.Error as e:
             print(f"Error executing query: {e}")
             return None
@@ -119,3 +122,5 @@ class Database:
         if self.conn:
             self.conn.close()
             print("\n= Database connection closed =")
+
+

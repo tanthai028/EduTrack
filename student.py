@@ -33,8 +33,6 @@ def view_details(db, uid):
     
     print()
 
-
-
 def delete_student(db, person_id):
     delete_student_details_query = '''DELETE FROM Student WHERE PersonID = ?;'''
     db.execute_query(delete_student_details_query, (person_id,))
