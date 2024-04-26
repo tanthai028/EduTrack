@@ -61,6 +61,8 @@ class Database:
             "OfficeNumber" TEXT,
             FOREIGN KEY ("PersonID") REFERENCES "Person" ("PersonID")
         );''')
+        
+        self.execute_query('''ALTER TABLE Student ADD COLUMN TotalCreditHrs INTEGER DEFAULT 0;''')
 
         import_data(self, 'courses.csv', 'Course', ['CourseID', 'CourseName', 'CourseDescription', 'CreditHours', 'ProfessorID'])
         import_data(self, 'professors.csv', 'Person', ['PersonID', 'FirstName', 'LastName', 'Email', 'PhoneNumber', 'DateOfBirth', 'Password', 'Role'])
