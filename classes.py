@@ -210,13 +210,13 @@ def print_classes(professor_id, db):
 def print_students_for_class(professor_id, db):
     # First, print all classes for the professor to choose from
     classes = print_classes(professor_id, db)
-    db.start_transaction()
     if classes:
         # Prompt professor to choose a class
         course_id = int(input("Enter the Course ID of the class to view enrolled students: "))
         selected_class = next((course for course in classes if course[0] == course_id), None)
-        
+
         if selected_class:
+            db.start_transaction()  # Start transaction closer to modification or critical read
             # Allow professor to choose sorting option
             print("Sort by:")
             print("1: First Name")
@@ -226,16 +226,13 @@ def print_students_for_class(professor_id, db):
             sort_order = input("Choose order (asc for ascending, desc for descending): ").strip().lower()
             
             # Define the sorting column based on user input
+            sort_column = "FirstName"  # Default sorting column
             if sort_option == 1:
                 sort_column = "FirstName"
             elif sort_option == 2:
                 sort_column = "LastName"
             elif sort_option == 3:
                 sort_column = "DateOfBirth"
-            else:
-                print("Invalid sort option. Defaulting to sorting by First Name in ascending order.")
-                sort_column = "FirstName"
-                sort_order = "asc"
 
             # Define order direction
             if sort_order not in ["asc", "desc"]:
@@ -247,15 +244,14 @@ def print_students_for_class(professor_id, db):
             query = f"SELECT Person.PersonID, Person.FirstName, Person.LastName, Person.DateOfBirth FROM Person JOIN Enrollment ON Person.PersonID = Enrollment.PersonID WHERE Enrollment.CourseID = ? ORDER BY Person.{sort_column} {sort_order};"
             params = (course_id,)
             students = db.execute_query(query, params)
-
-            if students:
+            if not students:
+                print("No students enrolled in the specified class.")
+            else:
                 print("Students Enrolled:")
                 for student in students:
                     print(f"Student ID: {student[0]}, Name: {student[1]} {student[2]}, Date of Birth: {student[3]}")
-            else:
-                print("No students enrolled in the specified class.")
-                db.rollback_transaction()
         else:
             print("The selected Course ID does not match any classes you teach.")
     else:
         print("There are no classes to select.")
+

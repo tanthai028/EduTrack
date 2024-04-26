@@ -69,7 +69,7 @@ class Database:
         self.import_data('users.csv', 'Person', ['PersonID', 'FirstName', 'LastName', 'Email', 'PhoneNumber', 'DateOfBirth', 'Password', 'Role'])
         self.import_data('users.csv', 'Professor', ['PersonID'])
         self.import_data('users.csv', 'Student', ['PersonID'])
-
+        self.import_data('enrollment.csv', 'Enrollment', ['EnrollmentID', 'PersonID', 'CourseID', 'EnrollmentDate'])
 
     def column_exists(self, table_name, column_name):
         """ Check if a specific column exists in a given table """

@@ -54,7 +54,7 @@ def create_account(db, role, fname, lname, email,dob, password):
 
             # Insert the new user into the Person table
             db.execute_query('''INSERT INTO Person (PersonID, FirstName, LastName, Email,DateOfBirth, Password, Role) 
-                                VALUES (?, ?, ?, ?, ?, ?);''', (uid, fname, lname, email, dob, password, role))
+                                VALUES (?, ?, ?, ?, ?, ?, ?);''', (uid, fname, lname, email, dob, password, role))
 
             # Insert into role-specific tables if necessary
             if role == 'Student':
