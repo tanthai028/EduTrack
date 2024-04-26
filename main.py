@@ -1,4 +1,4 @@
-from db import Database
+from database import Database
 from account import login, register
 from menu import Menu
 from helpers import clear_screen
