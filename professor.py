@@ -1,5 +1,5 @@
 from menu import Menu
-
+from clases import *
 def get_prof_info(db, uid):
     query = "SELECT * FROM Person WHERE PersonID = ? AND Role = 'Professor';"
     params = (uid,)
@@ -33,8 +33,7 @@ def view_details(db, uid):
     
     print()
 
-def manage_classes():
-    pass
+
 
 def delete_prof(db, uid):
     query = '''DELETE FROM Student WHERE PersonID = ?;'''
@@ -50,8 +49,10 @@ def delete_prof(db, uid):
 def professor_menu(db, uid):
     options = [
         ("View Professor Information", view_details, (db,uid)),
-        ("Manage Classes", manage_classes, (db,)),
+        ("Create Class", create_class, (db,uid)),
+        ("Manage Classes", manage_classes, (db,uid)),
         ("Delete Account", delete_prof, (db,uid)),
+        ("Print Students for a Class", print_students_for_class, (uid,1, None)),
         ("Exit", None)  # None here makes the menu exit
     ]
     title = "=== Professor Menu ==="

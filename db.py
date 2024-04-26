@@ -39,7 +39,7 @@ class Database:
         );''')
 
         self.execute_query('''CREATE TABLE IF NOT EXISTS "Course" (
-            "CourseID" TEXT PRIMARY KEY,
+            "CourseID" INTEGER PRIMARY KEY,
             "CourseName" TEXT NOT NULL,
             "CourseDescription" TEXT,
             "CreditHours" TEXT NOT NULL,

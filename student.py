@@ -1,5 +1,5 @@
 from menu import Menu
-
+from clases import *
 def get_student_info(db, uid):
     query = "SELECT * FROM Person WHERE PersonID = ? AND Role = 'Student';"
     params = (uid,)
@@ -33,18 +33,7 @@ def view_details(db, uid):
     
     print()
 
-def search_classes(db):
-    print("=== Search Classes ===")
-    keyword = input("Enter keyword to search for classes: ")
-    query = "SELECT CourseID, CourseName, CourseDescription, CreditHours FROM Course WHERE CourseName LIKE ?;"
-    params = (f'%{keyword}%',)
-    result = db.execute_query(query, params)
-    if result:
-        print("Search Results:")
-        for row in result:
-            print(f"CourseID: {row[0]}, Course Name: {row[1]}, Course Description: {row[2]}, Credit Hours: {row[3]}")
-    else:
-        print("No classes found matching the keyword.")
+
 
 def delete_student(db, person_id):
     delete_student_details_query = '''DELETE FROM Student WHERE PersonID = ?;'''
@@ -61,6 +50,7 @@ def student_menu(db, uid):
     options = [
         ("View Student Information", view_details, (db, uid)),
         ("Search Classes", search_classes, (db, )),
+        ("Manage Enrollments", manage_enrollments, (db, uid)),
         ("Delete Account", delete_student, (db, uid)),
         ("Back", None, ())  # None here makes the menu exit
     ]
