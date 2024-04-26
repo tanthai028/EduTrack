@@ -192,24 +192,43 @@ def unregister_a_class(u_number, db):
     else:
         print("You are not registered for any classes.")
 
-def print_students_for_class(professor_id, course_id, db):
-    print("=== Students Enrolled in Specific Class ===")
+def print_classes(professor_id, db):
+    print("=== Classes Taught by Professor ===")
+    query = "SELECT CourseID, CourseName FROM Course WHERE ProfessorID = ?;"
+    params = (professor_id,)
+    classes = db.execute_query(query, params)
     
-    # Check if the professor teaches the specified class
-    query = "SELECT * FROM Course WHERE CourseID = ? AND ProfessorID = ?;"
-    params = (course_id, professor_id)
-    class_info = db.execute_query(query, params)
-    
-    if class_info:
-        # Fetch students enrolled in the specified class
-        query = """ SELECT  Person.PersonID, Person.FirstName, Person.LastName FROM Person JOIN Enrollment ON Person.PersonID = Enrollment.PersonID WHERE Enrollment.CourseID = '{}';""".format(course_id)
-        students = db.execute_query(query)
-        
-        if students:
-            print("Students Enrolled:")
-            for student in students:
-                print(f"Student ID: {student[0]}, Name: {student[1]} {student[2]}")
-        else:
-            print("No students enrolled in the specified class.")
+    if classes:
+        print("Classes Taught:")
+        for course in classes:
+            print(f"Course ID: {course[0]}, Course Name: {course[1]}")
+        return classes
     else:
-        print("You don't teach the specified class or the class does not exist.")
+        print("No classes found for this professor.")
+        return None
+    
+def print_students_for_class(professor_id, db):
+    # First, print all classes for the professor to choose from
+    classes = print_classes(professor_id, db)
+    if classes:
+        # Prompt professor to choose a class
+        course_id = int(input("Enter the Course ID of the class to view enrolled students: "))
+        selected_class = next((course for course in classes if course[0] == course_id), None)
+        
+        if selected_class:
+            # Fetch and print students enrolled in the specified class
+            print("=== Students Enrolled in Specific Class ===")
+            query = "SELECT Person.PersonID, Person.FirstName, Person.LastName FROM Person JOIN Enrollment ON Person.PersonID = Enrollment.PersonID WHERE Enrollment.CourseID = ?;"
+            params = (course_id,)
+            students = db.execute_query(query, params)
+
+            if students:
+                print("Students Enrolled:")
+                for student in students:
+                    print(f"Student ID: {student[0]}, Name: {student[1]} {student[2]}")
+            else:
+                print("No students enrolled in the specified class.")
+        else:
+            print("The selected Course ID does not match any classes you teach.")
+    else:
+        print("There are no classes to select.")
