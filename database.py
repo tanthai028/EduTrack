@@ -114,7 +114,16 @@ class Database:
         except sqlite3.Error as e:
             print(f"Error executing query: {e}")
             return None
-        
+    
+    # Transcation Query
+    def start_transaction(self):
+        self.execute_query("BEGIN;")
+    def commit_transaction(self):
+        self.conn.commit()
+
+    def rollback_transaction(self):
+        self.conn.rollback()
+
     def close(self):
         """
         Closes the database connection.
