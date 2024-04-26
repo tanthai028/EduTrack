@@ -293,7 +293,7 @@ def check_course_seats(course_id, db):
         if students_count:
             # Assuming the execute_query returns a list of tuples, and we get the first tuple's first item
             number_of_students = students_count[0][0]
-            if number_of_students > 2:
+            if number_of_students > 10:
                 print(f"The course with CourseID {course_id} has finished seats.")
                 return True  # Return True to indicate that the course seats are finished
             else:
