@@ -62,11 +62,19 @@ class Database:
             FOREIGN KEY ("PersonID") REFERENCES "Person" ("PersonID")
         );''')
         
-        self.execute_query('''ALTER TABLE Student ADD COLUMN TotalCreditHrs INTEGER DEFAULT 0;''')
+        if not self.column_exists('Student', 'TotalCreditHrs'):
+            self.execute_query('''ALTER TABLE Student ADD COLUMN TotalCreditHrs INTEGER DEFAULT 0;''')
 
         import_data(self, 'courses.csv', 'Course', ['CourseID', 'CourseName', 'CourseDescription', 'CreditHours', 'ProfessorID'])
         import_data(self, 'professors.csv', 'Person', ['PersonID', 'FirstName', 'LastName', 'Email', 'PhoneNumber', 'DateOfBirth', 'Password', 'Role'])
         import_data(self, 'professors.csv', 'Professor', ['PersonID', 'OfficeNumber'])
+
+    def column_exists(self, table_name, column_name):
+        """ Check if a specific column exists in a given table """
+        cursor = self.conn.cursor()
+        cursor.execute(f"PRAGMA table_info({table_name})")
+        columns = [info[1] for info in cursor.fetchall()]
+        return column_name in columns
 
     def role_exists_for_person(self, person_id, role):
         """ Check if the specified role exists for the given person """
