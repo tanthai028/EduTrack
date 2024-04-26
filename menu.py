@@ -30,5 +30,5 @@ class Menu:
                 else:
                     print("Invalid option, please try again.")
         except KeyboardInterrupt:
-            print("\nProgram interrupted. Closing database...")
+            print("\nBack...")
             return

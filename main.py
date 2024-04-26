@@ -11,7 +11,11 @@ def main_menu(db):
     ]
     title = "=== EduTrack ==="
     menu = Menu(title, options)
-    menu.run()
+    try:
+        menu.run()
+    except KeyboardInterrupt:
+        print("\nProgram interrupted. Closing database...")
+        return
 
 if __name__ == "__main__":
     clear_screen()
