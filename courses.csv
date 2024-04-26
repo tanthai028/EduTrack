@@ -1,0 +1,20 @@
+CourseID,CourseName,CourseDescription,CreditHours,ProfessorID
+1,MAC 2311,Calculus I,3,U00000001
+2,MAC 2312,Calculus II,3,U00000001
+3,ENC 1101,Composition I,3,U00000002
+4,ENC 1102,Composition II,3,U00000002
+5,PHY 2048,Physics I,3,U00000003
+6,PHY 2048L,Physics I Lab,1,U00000003
+7,COT 3100,Intro Discrete Structures,3,U00000004
+8,COP 4530,Data Structures,3,U00000004
+9,CDA 3201,Logic Design,3,U00000005
+10,CDA 3201L,Logic Design Lab,1,U00000005
+11,COP 3514,Program Design,3,U00000006
+12,CDA 3103,Computer Organization,3,U00000006
+13,CDA 4205,Computer Architecture,3,U00000007
+14,CDA 4205L,Computer Architecture Lab,3,U00000007
+15,COT 4400,Analysis of Algorithms,3,U00000008
+16,EGN 4450,Linear Systems,3,U00000008
+17,COP 4600,Operating Systems,3,U00000009
+18,CNT 4419,Secure Coding,3,U00000009
+19,CIS 4250,Ethical Issues & Professional Conduct,3,U00000009
