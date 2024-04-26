@@ -34,11 +34,11 @@ def view_details(db, uid):
     print()
 
 def delete_student(db, person_id):
-    delete_student_details_query = '''DELETE FROM Student WHERE PersonID = ?;'''
-    db.execute_query(delete_student_details_query, (person_id,))
-
     delete_enrollments_query = '''DELETE FROM Enrollment WHERE PersonID = ?;'''
     db.execute_query(delete_enrollments_query, (person_id,))
+    
+    delete_student_details_query = '''DELETE FROM Student WHERE PersonID = ?;'''
+    db.execute_query(delete_student_details_query, (person_id,))
 
     delete_person_query = '''DELETE FROM Person WHERE PersonID = ?;'''
     db.execute_query(delete_person_query, (person_id,))
