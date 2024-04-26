@@ -38,15 +38,23 @@ def delete_student(db, person_id):
     
     # Proceed only if  the user confirms with 'yes'
     if confirmation.lower() == 'yes':
-        delete_enrollments_query = '''DELETE FROM Enrollment WHERE PersonID = ?;'''
-        db.execute_query(delete_enrollments_query, (person_id,))
-        
-        delete_student_details_query = '''DELETE FROM Student WHERE PersonID = ?;'''
-        db.execute_query(delete_student_details_query, (person_id,))
+        try:
+            db.start_transaction()
+            delete_enrollments_query = '''DELETE FROM Enrollment WHERE PersonID = ?;'''
+            db.execute_query(delete_enrollments_query, (person_id,))
+            
+            delete_student_details_query = '''DELETE FROM Student WHERE PersonID = ?;'''
+            db.execute_query(delete_student_details_query, (person_id,))
 
-        delete_person_query = '''DELETE FROM Person WHERE PersonID = ?;'''
-        db.execute_query(delete_person_query, (person_id,))
-        input("Student and all related records have been deleted successfully.")
+            delete_person_query = '''DELETE FROM Person WHERE PersonID = ?;'''
+            db.execute_query(delete_person_query, (person_id,))
+            
+            db.commit_transaction()
+            print("Student and all related records have been deleted successfully.")
+        except Exception as e:
+            # Rollback transaction in case of error
+            db.rollback_transaction()
+            print(f"An error occurred: {e}")
 
 def student_menu(db, uid):
     options = [
