@@ -18,7 +18,6 @@ def get_prof_info(db, uid):
 
 def view_details(db, uid):
     prof_info = get_prof_info(db, uid)
-    # print(prof_info)
 
     print("=== Professor Information ===")
     details = [
@@ -36,15 +35,9 @@ def view_details(db, uid):
 
 
 def delete_prof(db, uid):
-    query = '''DELETE FROM Student WHERE PersonID = ?;'''
-    db.execute_query(query, (uid,))
-
-    query = '''DELETE FROM Enrollment WHERE PersonID = ?;'''
-    db.execute_query(query, (uid,))
-
     query = '''DELETE FROM Person WHERE PersonID = ?;'''
     db.execute_query(query, (uid,))
-    input("Student and all related records have been deleted successfully.")
+    print(f'Deleted Professor {uid}')
 
 def professor_menu(db, uid):
     options = [

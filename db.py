@@ -1,5 +1,6 @@
 import sqlite3
 import os
+from helpers import import_data
 
 class Database:
     def __init__(self, db_filename='school_database.db'):
@@ -47,26 +48,12 @@ class Database:
             FOREIGN KEY ("ProfessorID") REFERENCES "Person" ("PersonID")
         );''')
 
-        self.execute_query('''CREATE TABLE IF NOT EXISTS "Role" (
-            "RoleID" INTEGER PRIMARY KEY AUTOINCREMENT,
-            "RoleName" TEXT NOT NULL UNIQUE
-        );''')
-
-        # Future implementation if we want multiple roles like teacher assistants who are students
-        self.execute_query('''CREATE TABLE IF NOT EXISTS "PersonRoles" (
-            "PersonID" TEXT NOT NULL,
-            "RoleID" INTEGER NOT NULL,
-            FOREIGN KEY ("PersonID") REFERENCES "Person" ("PersonID"),
-            FOREIGN KEY ("RoleID") REFERENCES "Role" ("RoleID"),
-            PRIMARY KEY ("PersonID", "RoleID")
-        );''')
-
         self.execute_query('''CREATE TABLE IF NOT EXISTS "Student" (
-        "PersonID" TEXT PRIMARY KEY,
-        "Major" TEXT,
-        "Minor" TEXT,
-        "GraduationYear" INTEGER,
-        FOREIGN KEY ("PersonID") REFERENCES "Person" ("PersonID")
+            "PersonID" TEXT PRIMARY KEY,
+            "Major" TEXT,
+            "Minor" TEXT,
+            "GraduationYear" INTEGER,
+            FOREIGN KEY ("PersonID") REFERENCES "Person" ("PersonID")
         );''')
 
         self.execute_query('''CREATE TABLE IF NOT EXISTS "Professor" (
@@ -74,6 +61,10 @@ class Database:
             "OfficeNumber" TEXT,
             FOREIGN KEY ("PersonID") REFERENCES "Person" ("PersonID")
         );''')
+
+        import_data(self, 'courses.csv', 'Course', ['CourseID', 'CourseName', 'CourseDescription', 'CreditHours', 'ProfessorID'])
+        import_data(self, 'professors.csv', 'Person', ['PersonID', 'FirstName', 'LastName', 'Email', 'PhoneNumber', 'DateOfBirth', 'Password', 'Role'])
+        import_data(self, 'professors.csv', 'Professor', ['PersonID', 'OfficeNumber'])
 
     def role_exists_for_person(self, person_id, role):
         """ Check if the specified role exists for the given person """
