@@ -30,5 +30,6 @@ class Menu:
                 else:
                     print("Invalid option, please try again.")
         except KeyboardInterrupt:
+            clear_screen()
             print("\nBack...")
             return
