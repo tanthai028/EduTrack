@@ -40,7 +40,7 @@ def id_exists(db, table, id_column, id_value):
     query = f"SELECT EXISTS(SELECT 1 FROM {table} WHERE {id_column} = ? LIMIT 1)"
     return db.execute_query(query, (id_value,))[0] == 1
 
-def create_account(db, role, fname, lname, email, password):
+def create_account(db, role, fname, lname, email,dob, password):
     # Check if the email already exists in the Person table
     existing_user = db.execute_query("SELECT * FROM Person WHERE Email = ?;", (email,))
     try:
@@ -53,8 +53,8 @@ def create_account(db, role, fname, lname, email, password):
                 uid = 'U' + generate_unique_id()
 
             # Insert the new user into the Person table
-            db.execute_query('''INSERT INTO Person (PersonID, FirstName, LastName, Email, Password, Role) 
-                                VALUES (?, ?, ?, ?, ?, ?);''', (uid, fname, lname, email, password, role))
+            db.execute_query('''INSERT INTO Person (PersonID, FirstName, LastName, Email,DateOfBirth, Password, Role) 
+                                VALUES (?, ?, ?, ?, ?, ?);''', (uid, fname, lname, email, dob, password, role))
 
             # Insert into role-specific tables if necessary
             if role == 'Student':
@@ -120,6 +120,7 @@ def register(db):
         fname = input('First Name: ').capitalize()
         lname = input('Last Name: ').capitalize()
         email = fname.lower() + lname.lower() + '@usf.edu'
+        dob = input('Date of Birth (YYYY-MM-DD): ')
         print(f'Your email is: {email}')
 
         password, conf_password = None, None
@@ -134,7 +135,7 @@ def register(db):
                 
             break
 
-        uid = create_account(db, role, fname, lname, email, password)
+        uid = create_account(db, role, fname, lname, email,dob, password)
         clear_screen()
         if uid:
             print('Logged in!')

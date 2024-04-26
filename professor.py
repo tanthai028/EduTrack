@@ -34,29 +34,32 @@ def view_details(db, uid):
     print()
 
 def delete_prof(db, uid):
-    # Start transaction
-    db.start_transaction()
+    confirmation = input(f"Are you sure you want to delete the account for Professor with ID {uid}? (yes/no): ")
     
-    try:
-        # Remove enrollments for courses the professor was teaching
-        query_enrollments = '''DELETE FROM Enrollment WHERE CourseID IN (SELECT CourseID FROM Course WHERE ProfessorID = ?);'''
-        db.execute_query(query_enrollments, (uid,))
-
-        # Remove the professor from courses they are teaching
-        query_courses = '''DELETE FROM Course WHERE ProfessorID = ?;'''
-        db.execute_query(query_courses, (uid,))
-
-        # Finally, delete the professor from the Person table
-        query_person = '''DELETE FROM Person WHERE PersonID = ?;'''
-        db.execute_query(query_person, (uid,))
+    if confirmation.lower() == 'yes':
+        # Start transaction
+        db.start_transaction()
         
-        # Commit transaction if all operations were successful
-        db.commit_transaction()
-        print(f'Deleted Professor {uid} and all associated records.')
-    except Exception as e:
-        # Rollback transaction in case of error
-        db.rollback_transaction()
-        print(f"An error occurred: {e}")
+        try:
+            # Remove enrollments for courses the professor was teaching
+            query_enrollments = '''DELETE FROM Enrollment WHERE CourseID IN (SELECT CourseID FROM Course WHERE ProfessorID = ?);'''
+            db.execute_query(query_enrollments, (uid,))
+
+            # Remove the professor from courses they are teaching
+            query_courses = '''DELETE FROM Course WHERE ProfessorID = ?;'''
+            db.execute_query(query_courses, (uid,))
+
+            # Finally, delete the professor from the Person table
+            query_person = '''DELETE FROM Person WHERE PersonID = ?;'''
+            db.execute_query(query_person, (uid,))
+            
+            # Commit transaction if all operations were successful
+            db.commit_transaction()
+            print(f'Deleted Professor {uid} and all associated records.')
+        except Exception as e:
+            # Rollback transaction in case of error
+            db.rollback_transaction()
+            print(f"An error occurred: {e}")
 
 def professor_menu(db, uid):
     options = [

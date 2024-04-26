@@ -210,25 +210,52 @@ def print_classes(professor_id, db):
 def print_students_for_class(professor_id, db):
     # First, print all classes for the professor to choose from
     classes = print_classes(professor_id, db)
+    db.start_transaction()
     if classes:
         # Prompt professor to choose a class
         course_id = int(input("Enter the Course ID of the class to view enrolled students: "))
         selected_class = next((course for course in classes if course[0] == course_id), None)
         
         if selected_class:
+            # Allow professor to choose sorting option
+            print("Sort by:")
+            print("1: First Name")
+            print("2: Last Name")
+            print("3: Date of Birth")
+            sort_option = int(input("Choose an option (1-3): "))
+            sort_order = input("Choose order (asc for ascending, desc for descending): ").strip().lower()
+            
+            # Define the sorting column based on user input
+            if sort_option == 1:
+                sort_column = "FirstName"
+            elif sort_option == 2:
+                sort_column = "LastName"
+            elif sort_option == 3:
+                sort_column = "DateOfBirth"
+            else:
+                print("Invalid sort option. Defaulting to sorting by First Name in ascending order.")
+                sort_column = "FirstName"
+                sort_order = "asc"
+
+            # Define order direction
+            if sort_order not in ["asc", "desc"]:
+                print("Invalid order. Defaulting to ascending.")
+                sort_order = "asc"
+            
             # Fetch and print students enrolled in the specified class
             print("=== Students Enrolled in Specific Class ===")
-            query = "SELECT Person.PersonID, Person.FirstName, Person.LastName FROM Person JOIN Enrollment ON Person.PersonID = Enrollment.PersonID WHERE Enrollment.CourseID = ?;"
+            query = f"SELECT Person.PersonID, Person.FirstName, Person.LastName, Person.DateOfBirth FROM Person JOIN Enrollment ON Person.PersonID = Enrollment.PersonID WHERE Enrollment.CourseID = ? ORDER BY Person.{sort_column} {sort_order};"
             params = (course_id,)
             students = db.execute_query(query, params)
 
             if students:
                 print("Students Enrolled:")
                 for student in students:
-                    print(f"Student ID: {student[0]}, Name: {student[1]} {student[2]}")
+                    print(f"Student ID: {student[0]}, Name: {student[1]} {student[2]}, Date of Birth: {student[3]}")
             else:
                 print("No students enrolled in the specified class.")
         else:
             print("The selected Course ID does not match any classes you teach.")
     else:
         print("There are no classes to select.")
+    db.commit_transaction()

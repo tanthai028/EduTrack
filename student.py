@@ -34,6 +34,7 @@ def view_details(db, uid):
     print()
 
 def delete_student(db, person_id):
+<<<<<<< Updated upstream
     # Start transaction
     db.start_transaction()
 
@@ -51,6 +52,21 @@ def delete_student(db, person_id):
         # Rollback transaction in case of error
         db.rollback_transaction()
         print(f"An error occurred: {e}")
+=======
+    confirmation = input(f"Are you sure you want to delete the account for Professor with ID {person_id}? (yes/no): ")
+    
+    # Proceed only if  the user confirms with 'yes'
+    if confirmation.lower() == 'yes':
+        delete_enrollments_query = '''DELETE FROM Enrollment WHERE PersonID = ?;'''
+        db.execute_query(delete_enrollments_query, (person_id,))
+        
+        delete_student_details_query = '''DELETE FROM Student WHERE PersonID = ?;'''
+        db.execute_query(delete_student_details_query, (person_id,))
+
+        delete_person_query = '''DELETE FROM Person WHERE PersonID = ?;'''
+        db.execute_query(delete_person_query, (person_id,))
+        input("Student and all related records have been deleted successfully.")
+>>>>>>> Stashed changes
 
 def student_menu(db, uid):
     options = [
