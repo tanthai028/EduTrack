@@ -120,9 +120,7 @@ class Database:
     # Transcation Query
     def start_transaction(self):
         self.execute_query("BEGIN;")
-    def commit_transaction(self):
-        self.conn.commit()
-
+        
     def rollback_transaction(self):
         self.conn.rollback()
 

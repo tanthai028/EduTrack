@@ -254,8 +254,8 @@ def print_students_for_class(professor_id, db):
                     print(f"Student ID: {student[0]}, Name: {student[1]} {student[2]}, Date of Birth: {student[3]}")
             else:
                 print("No students enrolled in the specified class.")
+                db.rollback_transaction()
         else:
             print("The selected Course ID does not match any classes you teach.")
     else:
         print("There are no classes to select.")
-    db.commit_transaction()

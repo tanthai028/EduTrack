@@ -54,7 +54,6 @@ def delete_prof(db, uid):
             db.execute_query(query_person, (uid,))
             
             # Commit transaction if all operations were successful
-            db.commit_transaction()
             print(f'Deleted Professor {uid} and all associated records.')
         except Exception as e:
             # Rollback transaction in case of error

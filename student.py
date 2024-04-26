@@ -48,8 +48,7 @@ def delete_student(db, person_id):
 
             delete_person_query = '''DELETE FROM Person WHERE PersonID = ?;'''
             db.execute_query(delete_person_query, (person_id,))
-            
-            db.commit_transaction()
+
             print("Student and all related records have been deleted successfully.")
         except Exception as e:
             # Rollback transaction in case of error
