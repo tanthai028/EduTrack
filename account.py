@@ -74,73 +74,77 @@ def create_account(db, role, fname, lname, email, password):
         input(f"An error occurred while creating the account: {str(e)}")
 
 def login(db):
-    uid = ''
-    while True:
-        try:
+    try:
+        uid = ''
+        while True:
             uid = input("Enter your UID: ")
             if not valid_uid(uid):
                 clear_screen()
                 print('Invalid UID.')
                 continue
-
             break
-        except KeyboardInterrupt:
-            clear_screen()
-            print('Back...')
+
+        reformat_uid(uid)
+        password = input("Enter your password: ")
+
+        try:
+            result = db.execute_query("SELECT Role FROM Person WHERE PersonID = ? AND Password = ?;", (uid, password))
+            if result:
+                input("Login successful!")
+                clear_screen()
+                role = result[0][0]  # Assuming the role is the first column in the result set
+
+                if role == 'Student':
+                    student_menu(db, uid)
+                elif role == 'Professor':
+                    professor_menu(db, uid)
+                
+                return True
+            else:
+                input("Invalid uid or password.")
+                return False
+        except Exception as e:
+            print(f"An error occurred: {e}")
             return False
+    except KeyboardInterrupt:
+        clear_screen()
+        print('Back...')
+        return
 
-    reformat_uid(uid)
-    password = input("Enter your password: ")
-
+def register(db):
     try:
-        result = db.execute_query("SELECT Role FROM Person WHERE PersonID = ? AND Password = ?;", (uid, password))
-        if result:
-            input("Login successful!")
-            clear_screen()
-            role = result[0][0]  # Assuming the role is the first column in the result set
+        role = ask_role()
+        clear_screen()
+        
+        print(f"=== {role} Registration ===")
+        fname = input('First Name: ').capitalize()
+        lname = input('Last Name: ').capitalize()
+        email = fname.lower() + lname.lower() + '@usf.edu'
+        print(f'Your email is: {email}')
 
+        password, conf_password = None, None
+        while True:
+            password = input('Password: ')
+            conf_password = input('Confirm Password: ')
+
+            if password != conf_password:
+                clear_screen()
+                print('Password does not match')
+                continue
+                
+            break
+
+        uid = create_account(db, role, fname, lname, email, password)
+        clear_screen()
+        if uid:
+            print('Logged in!')
             if role == 'Student':
                 student_menu(db, uid)
             elif role == 'Professor':
                 professor_menu(db, uid)
-            
-            return True
         else:
-            input("Invalid uid or password.")
-            return False
-    except Exception as e:
-        print(f"An error occurred: {e}")
-        return False
-
-def register(db):
-    role = ask_role()
-    clear_screen()
-    
-    print(f"=== {role} Registration ===")
-    fname = input('First Name: ').capitalize()
-    lname = input('Last Name: ').capitalize()
-    email = fname.lower() + lname.lower() + '@usf.edu'
-    print(f'Your email is: {email}')
-
-    password, conf_password = None, None
-    while True:
-        password = input('Password: ')
-        conf_password = input('Confirm Password: ')
-
-        if password != conf_password:
-            clear_screen()
-            print('Password does not match')
-            continue
-            
-        break
-
-    uid = create_account(db, role, fname, lname, email, password)
-    clear_screen()
-    if uid:
-        print('Logged in!')
-        if role == 'Student':
-            student_menu(db, uid)
-        elif role == 'Professor':
-            professor_menu(db, uid)
-    else:
+            return
+    except KeyboardInterrupt:
+        clear_screen()
+        print('Back...')
         return
