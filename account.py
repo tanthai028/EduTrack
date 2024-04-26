@@ -84,7 +84,7 @@ def login(db):
                 continue
             break
 
-        reformat_uid(uid)
+        uid = reformat_uid  (uid)
         password = input("Enter your password: ")
 
         try:
@@ -121,19 +121,23 @@ def register(db):
         lname = input('Last Name: ').capitalize()
         email = fname.lower() + lname.lower() + '@usf.edu'
         dob = input('Date of Birth (YYYY-MM-DD): ')
+        if not dob: dob = None
         print(f'Your email is: {email}')
 
         password, conf_password = None, None
         while True:
             password = input('Password: ')
             conf_password = input('Confirm Password: ')
+            if not password or not conf_password:
+                clear_screen()
+                print('Invalid password.')
 
             if password != conf_password:
                 clear_screen()
                 print('Password does not match')
-                continue
-                
-            break
+
+            if password and password == conf_password: 
+                break
 
         uid = create_account(db, role, fname, lname, email,dob, password)
         clear_screen()

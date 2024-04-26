@@ -2,17 +2,33 @@ from menu import Menu
 from classes import *
 
 def get_student_info(db, uid):
-    query = "SELECT * FROM Person WHERE PersonID = ? AND Role = 'Student';"
+    # Adjusted query to join Person and Student tables
+    query = """
+    SELECT 
+        Person.PersonID, Person.FirstName, Person.LastName, Person.Email, Person.PhoneNumber, Person.DateOfBirth, 
+        Student.Major, Student.Minor, Student.GraduationYear, Student.TotalCreditHrs
+    FROM 
+        Person 
+    JOIN 
+        Student ON Person.PersonID = Student.PersonID
+    WHERE 
+        Person.PersonID = ? AND Person.Role = 'Student';
+    """
     params = (uid,)
     student_info = db.execute_query(query, params)
     if student_info:
+        # Updated return dictionary to include new fields
         return {
             'StudentID': student_info[0][0],
             'FirstName': student_info[0][1],
             'LastName': student_info[0][2],
             'Email': student_info[0][3],
             'PhoneNumber': student_info[0][4],
-            'DateOfBirth': student_info[0][5]
+            'DateOfBirth': student_info[0][5],
+            'Major': student_info[0][6],
+            'Minor': student_info[0][7],
+            'GraduationYear': student_info[0][8],
+            'TotalCreditHrs': student_info[0][9],
         }
     else:
         return None
@@ -27,9 +43,14 @@ def view_details(db, uid):
         f"Email: {student_info.get('Email', 'N/A')}",
         f"Phone Number: {student_info.get('PhoneNumber', 'N/A')}",
         f"Date of Birth: {student_info.get('DateOfBirth', 'N/A')}",
+        f"Major: {student_info.get('Major', 'N/A')}",
+        f"Minor: {student_info.get('Minor', 'N/A')}",
+        f"GraduationYear: {student_info.get('GraduationYear', 'N/A')}",
+        f"TotalCreditHrs: {student_info.get('TotalCreditHrs', 'N/A')}",
     ]
     for detail in details:
-        print(detail)
+        if 'None' not in detail:
+            print(detail)
     
     print()
 
