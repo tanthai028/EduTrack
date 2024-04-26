@@ -15,6 +15,7 @@ def search_classes(db):
         print("No classes found matching the keyword.")
 
 def create_class(db, uid):
+    create_enrollment_view(db)
     print("=== Create Class ===")
     course_name = input("Enter course name: ")
     course_description = input("Enter course description: ")
@@ -30,6 +31,7 @@ def create_class(db, uid):
 
 
 def manage_classes(db, uid):
+    create_enrollment_view(db)
     print("=== Manage Classes ===")
     # Fetch classes managed by the faculty member
     query = "SELECT * FROM Course WHERE ProfessorID = ?;"
@@ -99,6 +101,7 @@ def update_class(course_id, db):
         print(f"Class with CourseID: {course_id} not found.")
 
 def remove_class(course_id, db):
+    create_enrollment_view(db)
     print(f"=== Remove Class {course_id} ===")
     # Confirm with the instructor before removing the class
     confirmation = input(f"Are you sure you want to remove the class with CourseID {course_id}? (yes/no): ")
@@ -117,6 +120,7 @@ def remove_class(course_id, db):
         print("Removal canceled.")
 
 def manage_enrollments(db, uid):
+    create_enrollment_view(db)
     print("=== Manage Enrollments ===")
     print("1. Register for a class")
     print("2. Unregister from a class")
@@ -142,14 +146,16 @@ def register_classes(u_number, db):
             query = "SELECT * FROM Course WHERE CourseID = ?;"
             params = (course_id.strip(),)
             course = db.execute_query(query, params)
+
             if course:
-                # Insert the enrollment into the database
-                enrollment_id = f"{u_number}_{course_id.strip()}"
-                enrollment_date = datetime.now().strftime("%Y-%m-%d")
-                query = "INSERT INTO Enrollment (EnrollmentID, PersonID, CourseID, EnrollmentDate) VALUES (?, ?, ?, ?);"
-                params = (enrollment_id, u_number, course_id.strip(), enrollment_date)
-                db.execute_query(query, params)
-                print(f"Successfully registered for CourseID: {course_id.strip()}")
+                if check_course_seats(course_id.strip(), db)==False:
+                    # Insert the enrollment into the database
+                    enrollment_id = f"{u_number}_{course_id.strip()}"
+                    enrollment_date = datetime.now().strftime("%Y-%m-%d")
+                    query = "INSERT INTO Enrollment (EnrollmentID, PersonID, CourseID, EnrollmentDate) VALUES (?, ?, ?, ?);"
+                    params = (enrollment_id, u_number, course_id.strip(), enrollment_date)
+                    db.execute_query(query, params)
+                    print(f"Successfully registered for CourseID: {course_id.strip()}")
             else:
                 print(f"CourseID: {course_id.strip()} does not exist.")
     else:
@@ -255,3 +261,47 @@ def print_students_for_class(professor_id, db):
     else:
         print("There are no classes to select.")
 
+def create_enrollment_view(db):
+    # Define the SQL query to create a view
+    query = """
+    CREATE VIEW CourseEnrollmentView AS
+        SELECT Course.CourseID, Course.CourseName, COUNT(Enrollment.PersonID) AS NumberOfStudents
+        FROM Course
+        LEFT JOIN Enrollment ON Course.CourseID = Enrollment.CourseID
+        GROUP BY Course.CourseID, Course.CourseName;
+    """
+
+    try:
+        # Execute the query to create the view
+        db.execute_query(query)
+        print("View 'CourseEnrollmentView' created successfully.")
+    except Exception as e:
+        print(f"An error occurred while creating the view: {e}")
+
+def check_course_seats(course_id, db):
+    # Fetch the number of students enrolled in the course
+    query = """
+    SELECT COUNT(PersonID) AS NumberOfStudents
+    FROM Enrollment
+    WHERE CourseID = ?
+    GROUP BY CourseID;
+    """
+    params = (course_id,)
+
+    try:
+        students_count = db.execute_query(query, params)
+        if students_count:
+            # Assuming the execute_query returns a list of tuples, and we get the first tuple's first item
+            number_of_students = students_count[0][0]
+            if number_of_students > 2:
+                print(f"The course with CourseID {course_id} has finished seats.")
+                return True  # Return True to indicate that the course seats are finished
+            else:
+                print(f"The course with CourseID {course_id} has available seats. Current enrollment: {number_of_students}")
+                return False  # Return False to indicate that seats are available
+        else:
+            print(f"No students are enrolled in the course with CourseID {course_id}.")
+            return False  # Return False as the course clearly has available seats
+    except Exception as e:
+        print(f"An error occurred while checking the course seats: {e}")
+        return None  # Return None to indicate an error occurred
