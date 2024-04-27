@@ -88,13 +88,22 @@ def update_class(course_id, db):
         new_credit_hours = input("Enter new credit hours (leave blank to keep current): ")
         
         # Update the class information in the database
-        if new_course_name or new_course_description or new_credit_hours:
-            query = "UPDATE Course SET CourseName = COALESCE(?, CourseName), CourseDescription = COALESCE(?, CourseDescription), CreditHours = COALESCE(?, CreditHours) WHERE CourseID = ?;"
-            params = (new_course_name, new_course_description, new_credit_hours, course_id)
+        if new_course_description:
+            query = "UPDATE Course SET CourseDescription = COALESCE(?, CourseDescription) WHERE CourseID = ?;"
+            params = (new_course_description, course_id)
             db.execute_query(query, params)
-            print("Class updated successfully.")
-        else:
-            print("No changes made.")
+
+        if new_course_name:
+            query = "UPDATE Course SET CourseName = COALESCE(?, CourseName) WHERE CourseID = ?;"
+            params = (new_course_name, course_id)
+            db.execute_query(query, params)
+
+        if new_credit_hours:
+            query = "UPDATE Course SET CreditHours = COALESCE(?, CreditHours) WHERE CourseID = ?;"
+            params = (new_credit_hours, course_id)
+            db.execute_query(query, params)
+            
+        print("Class updated successfully.")
     else:
         print(f"Class with CourseID: {course_id} not found.")
 
@@ -271,8 +280,8 @@ def create_enrollment_view(db):
         # Execute the query to create the view
         db.execute_query(query)
         print("View 'CourseEnrollmentView' created successfully.")
-    except Exception as e:
-        print(f"An error occurred while creating the view: {e}")
+    except:
+        return
 
 def check_course_seats(course_id, db):
     # Fetch the number of students enrolled in the course
