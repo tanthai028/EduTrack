@@ -80,9 +80,9 @@ def update_class(course_id, db):
     
     if class_info:
         print("Current Class Information:")
-        print(f"Course Name: {class_info[0][2]}")
-        print(f"Current Course Description: {class_info[0][3]}")
-        print(f"Current Credit Hours: {class_info[0][4]}")
+        print(f"Course Name: {class_info[0][1]}")
+        print(f"Current Course Description: {class_info[0][2]}")
+        print(f"Current Credit Hours: {class_info[0][3]}")
         
         # Get updated information from the user
         new_course_name = input("Enter new course name (leave blank to keep current): ")
