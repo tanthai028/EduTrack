@@ -1,6 +1,7 @@
 import sqlite3
 import os
 import csv
+import bcrypt
 
 class Database:
     def __init__(self, db_filename='school_database.db'):
@@ -94,13 +95,21 @@ class Database:
         return len(results) > 0
     
     def import_data(self, csv_path, table, columns):
+        """Import data from a CSV file into the specified table."""
         with open(csv_path, newline='', encoding='utf-8') as csvfile:
             reader = csv.DictReader(csvfile)
             for row in reader:
-                data_tuple = tuple(row[col] if col in row else None for col in columns)
+                data_tuple = []
+                for col in columns:
+                    if col == 'Password': 
+                        password_plain = row[col]
+                        hashed_password = bcrypt.hashpw(password_plain.encode('utf-8'), bcrypt.gensalt())
+                        data_tuple.append(hashed_password)
+                    else:
+                        data_tuple.append(row[col] if col in row else None)
                 placeholders = ', '.join(['?'] * len(columns))
                 sql = f'INSERT OR IGNORE INTO {table} ({", ".join(columns)}) VALUES ({placeholders});'
-                self.execute_query(sql, data_tuple)
+                self.execute_query(sql, tuple(data_tuple))
 
     def execute_query(self, query, params=None):
         """

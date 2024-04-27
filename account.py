@@ -2,6 +2,7 @@ import uuid
 from helpers import clear_screen
 from student import student_menu
 from professor import professor_menu
+import bcrypt
 
 def generate_unique_id():
     """Generate a UUID and extract the first 8 digits from it."""
@@ -41,20 +42,24 @@ def id_exists(db, table, id_column, id_value):
     return db.execute_query(query, (id_value,))[0] == 1
 
 def create_account(db, role, fname, lname, email,dob, password):
-    # Check if the email already exists in the Person table
-    existing_user = db.execute_query("SELECT * FROM Person WHERE Email = ?;", (email,))
     try:
+        # Hash the password
+        hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+
+        # Continue with your existing logic to check if the user exists
+        existing_user = db.execute_query("SELECT * FROM Person WHERE Email = ?;", (email,))
         if existing_user:
-            input(f"{role} already exists. Please log in.")
+            existing_user_role = existing_user[0][7]
+            input(f"This user already exists as '{existing_user_role}'. Please log in.")
         else:
             # Generate a unique Person ID
             uid = 'U' + generate_unique_id()
             while id_exists(db, 'Person', 'PersonID', uid):
                 uid = 'U' + generate_unique_id()
 
-            # Insert the new user into the Person table
-            db.execute_query('''INSERT INTO Person (PersonID, FirstName, LastName, Email,DateOfBirth, Password, Role) 
-                                VALUES (?, ?, ?, ?, ?, ?, ?);''', (uid, fname, lname, email, dob, password, role))
+            # Insert the new user into the Person table with the hashed password
+            db.execute_query('''INSERT INTO Person (PersonID, FirstName, LastName, Email, DateOfBirth, Password, Role) 
+                                VALUES (?, ?, ?, ?, ?, ?, ?);''', (uid, fname, lname, email, dob, hashed_password, role))
 
             # Insert into role-specific tables if necessary
             if role == 'Student':
@@ -75,37 +80,36 @@ def create_account(db, role, fname, lname, email,dob, password):
 
 def login(db):
     try:
-        uid = ''
-        while True:
-            uid = input("Enter your UID: ")
-            if not valid_uid(uid):
-                clear_screen()
-                print('Invalid UID.')
-                continue
-            break
+        uid = input("Enter your UID: ")
+        if not valid_uid(uid):
+            print('Invalid UID.')
+            return False
+        
+        uid = reformat_uid(uid)
 
-        uid = reformat_uid  (uid)
         password = input("Enter your password: ")
-
         try:
-            result = db.execute_query("SELECT Role FROM Person WHERE PersonID = ? AND Password = ?;", (uid, password))
+            # Fetch the hashed password from the database
+            result = db.execute_query("SELECT Password, Role FROM Person WHERE PersonID = ?;", (uid,))
+            print(result)
             if result:
-                input("Login successful!")
-                clear_screen()
-                role = result[0][0]  # Assuming the role is the first column in the result set
+                stored_hash = result[0][0]
+                print(stored_hash)
+                # Verify the provided password against the stored hash
+                if bcrypt.checkpw(password.encode('utf-8'), stored_hash):
+                    input("Login successful!")
+                    role = result[0][1]
 
                 if role == 'Student':
                     student_menu(db, uid)
                 elif role == 'Professor':
                     professor_menu(db, uid)
-                
-                return True
+                else:
+                    input("Invalid password.")
             else:
-                input("Invalid uid or password.")
-                return False
+                input("Invalid UID or password.")
         except Exception as e:
             print(f"An error occurred: {e}")
-            return False
     except KeyboardInterrupt:
         clear_screen()
         print('Back...')
@@ -139,7 +143,7 @@ def register(db):
             if password and password == conf_password: 
                 break
 
-        uid = create_account(db, role, fname, lname, email,dob, password)
+        uid = create_account(db, role, fname, lname, email, dob, password)
         clear_screen()
         if uid:
             print('Logged in!')

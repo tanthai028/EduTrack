@@ -27,9 +27,38 @@ def create_class(db, uid):
     db.execute_query(query, params)
     print("Class created successfully.")
 
+def create_professor_specific_view(professor_id, db):
+    # Drop the existing view if it exists
+    db.execute_query("DROP VIEW IF EXISTS ProfessorSpecificCourseEnrollmentView;")
+    
+    # Create a new view specific to the given professor ID
+    create_view_query = f"""
+    CREATE VIEW ProfessorSpecificCourseEnrollmentView AS
+        SELECT c.CourseID, c.CourseName, COUNT(e.PersonID) AS NumberOfStudents
+        FROM Course c
+        LEFT JOIN Enrollment e ON c.CourseID = e.CourseID
+        WHERE c.ProfessorID = '{professor_id}'
+        GROUP BY c.CourseID, c.CourseName;
+    """
+    db.execute_query(create_view_query)
+    print("View created for Professor ID:", professor_id)
 
+def display_courses_for_professor(db):
+    # Query the dynamically created view
+    query = "SELECT CourseID, CourseName, NumberOfStudents FROM ProfessorSpecificCourseEnrollmentView;"
+    try:
+        results = db.execute_query(query)
+        if results:
+            print("Courses Taught:")
+            for course in results:
+                print(f"Course ID: {course[0]}, Course Name: {course[1]}, Enrolled Students: {course[2]}")
+        else:
+            print("No courses found for this professor.")
+    except Exception as e:
+        print(f"An error occurred while fetching courses: {str(e)}")
 
 def manage_classes(db, uid):
+    create_professor_specific_view(uid, db)
     print("=== Manage Classes ===")
     # Fetch classes managed by the faculty member
     query = "SELECT * FROM Course WHERE ProfessorID = ?;"
@@ -38,10 +67,8 @@ def manage_classes(db, uid):
     
     if faculty_classes:
         # Display classes managed by the faculty member
-        print("Classes Managed by You:")
-        for row in faculty_classes:
-            print(f"CourseID: {row[0]}, Course Name: {row[1]}, Course Description: {row[2]}, Credit Hours: {row[3]}")
-        
+        display_courses_for_professor(db)
+
         # Offer options for managing classes (e.g., add, update, remove)
         option = input("Enter 'update', or 'remove' to manage classes: ")
         if option == 'update':
@@ -266,21 +293,15 @@ def print_students_for_class(professor_id, db):
     else:
         print("There are no classes to select.")
 
-def create_enrollment_view(db):
-    # Define the SQL query to create a view
-    query = """
-    CREATE VIEW CourseEnrollmentView AS
-        SELECT Course.CourseID, Course.CourseName, COUNT(Enrollment.PersonID) AS NumberOfStudents
-        FROM Course
-        LEFT JOIN Enrollment ON Course.CourseID = Enrollment.CourseID
-        GROUP BY Course.CourseID, Course.CourseName;
-    """
-
+def get_course_enrollments(db):
+    query = "SELECT CourseID, CourseName, NumberOfStudents FROM CourseEnrollmentView;"
     try:
-        # Execute the query to create the view
-        db.execute_query(query)
-    except:
-        return
+        results = db.execute_query(query)
+        for row in results:
+            print(f"Course ID: {row[0]}, Course Name: {row[1]}, Enrolled Students: {row[2]}")
+    except Exception as e:
+        print(f"Error fetching course enrollments: {str(e)}")
+
 
 def check_course_seats(course_id, db):
     # Fetch the number of students enrolled in the course
