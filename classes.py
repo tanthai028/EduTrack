@@ -15,7 +15,6 @@ def search_classes(db):
         print("No classes found matching the keyword.")
 
 def create_class(db, uid):
-    create_enrollment_view(db)
     print("=== Create Class ===")
     course_name = input("Enter course name: ")
     course_description = input("Enter course description: ")
@@ -31,7 +30,6 @@ def create_class(db, uid):
 
 
 def manage_classes(db, uid):
-    create_enrollment_view(db)
     print("=== Manage Classes ===")
     # Fetch classes managed by the faculty member
     query = "SELECT * FROM Course WHERE ProfessorID = ?;"
@@ -101,7 +99,6 @@ def update_class(course_id, db):
         print(f"Class with CourseID: {course_id} not found.")
 
 def remove_class(course_id, db):
-    create_enrollment_view(db)
     print(f"=== Remove Class {course_id} ===")
     # Confirm with the instructor before removing the class
     confirmation = input(f"Are you sure you want to remove the class with CourseID {course_id}? (yes/no): ")
@@ -120,7 +117,6 @@ def remove_class(course_id, db):
         print("Removal canceled.")
 
 def manage_enrollments(db, uid):
-    create_enrollment_view(db)
     print("=== Manage Enrollments ===")
     print("1. Register for a class")
     print("2. Unregister from a class")
