@@ -279,7 +279,6 @@ def create_enrollment_view(db):
     try:
         # Execute the query to create the view
         db.execute_query(query)
-        print("View 'CourseEnrollmentView' created successfully.")
     except:
         return
 
