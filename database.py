@@ -18,6 +18,16 @@ class Database:
             print(f"Error connecting to database: {e}")
 
     def setup_database(self):
+        """
+        Person(PersonID, FirstName, LastName, Email, PhoneNumber, DateOfBirth, Password, Role)
+        Student(PersonID, Major, Minor, GraduationYear)
+        Professor(PersonID, OfficeNumber)
+        Course(CourseID, CourseName, CourseDescription, CreditHours, ProfessorID)
+            Foreign Keys: ProfessorID (Person)
+        Enrollment(EnrollmentID, PersonID, CourseID, EnrollmentDate)
+            Foreign Keys: CourseID(Course), PersonID(Person)
+        """
+
         self.execute_query('''CREATE TABLE IF NOT EXISTS "Person" (
             "PersonID" TEXT PRIMARY KEY,
             "FirstName" TEXT NOT NULL,
